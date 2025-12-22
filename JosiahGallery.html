@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gallery">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23007aff' width='100' height='100'/><text y='70' x='50' text-anchor='middle' font-size='60'>📸</text></svg>">
+    <title>Gallery</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; }
+        .header { background: #007aff; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; }
+        .header h1 { font-size: 20px; margin-bottom: 10px; }
+        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .btn { background: white; color: #007aff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+        .btn-primary { background: #34c759; color: white; }
+        .btn-warning { background: #ff9500; color: white; }
+        .btn-small { padding: 6px 12px; font-size: 13px; }
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+        .grid-small { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .card-body { padding: 12px; }
+        .card-title { font-weight: 600; margin-bottom: 8px; }
+        .card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .list-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; }
+        .list-image { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+        .list-content { flex: 1; }
+        .list-actions { display: flex; flex-direction: column; gap: 6px; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal.active { display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e5e5e7; font-size: 20px; font-weight: 600; }
+        .modal-body { padding: 20px; }
+        .modal-image { width: 100%; border-radius: 12px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+        .form-input, .form-textarea { width: 100%; padding: 10px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 16px; }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .modal-actions { padding: 20px; border-top: 1px solid #e5e5e7; display: flex; gap: 10px; justify-content: flex-end; }
+        .hidden { display: none; }
+        .success { background: #34c759; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: none; }
+        .success.show { display: block; }
+        .empty { text-align: center; padding: 60px 20px; color: #666; }
+        select { background: white; color: #007aff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+        .share-option { padding: 15px; border: 2px solid #e5e5e7; border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
+        .share-option:active { border-color: #007aff; background: #f0f8ff; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📸 Gallery</h1>
+        <select id="groupSel"></select>
+        <div class="toolbar">
+            <input type="file" id="fileIn" accept="image/*" class="hidden">
+            <input type="file" id="cameraIn" accept="image/*" capture="environment" class="hidden">
+            <input type="file" id="importIn" accept=".json" class="hidden">
+            <button class="btn btn-primary" id="addBtn">+ Add</button>
+            <button class="btn btn-primary" id="camBtn">📷 Camera</button>
+            <button class="btn btn-small" id="bigBtn">Big</button>
+            <button class="btn btn-small" id="smallBtn">Small</button>
+            <button class="btn btn-small" id="listBtn">List</button>
+            <button class="btn btn-small" id="groupBtn">Groups</button>
+            <button class="btn btn-warning btn-small" id="shareBtn">Share</button>
+            <button class="btn btn-small" id="cloudBtn">☁️ iCloud</button>
+        </div>
+    </div>
+    <div class="container">
+        <div id="msg" class="success"></div>
+        <div id="gallery"></div>
+    </div>
+    
+    <div id="addMod" class="modal"><div class="modal-content"><div class="modal-header" id="addTitle">Add</div><div class="modal-body"><img id="prev" class="modal-image hidden"><div class="form-group"><label class="form-label">Name</label><input id="name" class="form-input"></div><div class="form-group"><label class="form-label">Description</label><textarea id="desc" class="form-textarea"></textarea></div></div><div class="modal-actions"><button class="btn" id="cancelAdd">Cancel</button><button class="btn btn-primary" id="saveAdd">Save</button></div></div></div>
+    
+    <div id="viewMod" class="modal"><div class="modal-content"><div class="modal-header" id="viewTitle"></div><div class="modal-body"><img id="viewImg" class="modal-image"><div class="form-label">DESCRIPTION</div><div id="viewDesc"></div></div><div class="modal-actions"><button class="btn" id="delView" style="background:#ff3b30;color:white">Delete</button><button class="btn" id="editView">Edit</button><button class="btn btn-primary" id="closeView">Close</button></div></div></div>
+    
+    <div id="groupMod" class="modal"><div class="modal-content"><div class="modal-header">Groups</div><div class="modal-body"><div class="form-group"><label class="form-label">New Group</label><input id="newGrp" class="form-input"></div><button class="btn btn-primary" id="createGrp">Create</button><div id="grpList" style="margin-top:20px"></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeGrp">Close</button></div></div></div>
+    
+    <div id="shareMod" class="modal"><div class="modal-content"><div class="modal-header">Share</div><div class="modal-body"><div class="share-option" id="exp"><b>📤 Export File</b><div style="font-size:13px;color:#666">Download to share via AirDrop</div></div><div class="share-option" id="cop"><b>🔗 Copy Data</b><div style="font-size:13px;color:#666">Copy to clipboard</div></div><div class="share-option" id="imp"><b>📥 Import</b><div style="font-size:13px;color:#666">Import from file or clipboard</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeSh">Close</button></div></div></div>
+    
+    <div id="importMod" class="modal"><div class="modal-content"><div class="modal-header">Import</div><div class="modal-body"><button class="btn" id="chooseBtn">Choose File</button><div class="form-group" style="margin-top:15px"><label class="form-label">Or Paste Data</label><textarea id="paste" class="form-textarea"></textarea></div></div><div class="modal-actions"><button class="btn" id="cancelImp">Cancel</button><button class="btn btn-primary" id="doImp">Import</button></div></div></div>
+
+    <div id="cloudMod" class="modal"><div class="modal-content"><div class="modal-header">iCloud Sync</div><div class="modal-body"><div class="share-option" id="backupCloud"><b>☁️ Backup to iCloud</b><div style="font-size:13px;color:#666">Export all groups as file to save to iCloud Drive</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore from iCloud</b><div style="font-size:13px;color:#666">Import backup file from iCloud Drive</div></div><div style="margin-top:15px;padding:15px;background:#f0f8ff;border-radius:8px;font-size:13px"><b>💡 How to sync:</b><br>1. Tap "Backup to iCloud" to save<br>2. File saves to iCloud Drive/Downloads<br>3. On other device, tap "Restore from iCloud"<br>4. Select your backup file</div></div><div class="modal-actions"><button class="btn btn-primary" id="closeCloud">Close</button></div></div></div>
+
+    <script>
+        const app = {
+            data: {},
+            curr: 'default',
+            view: 'big',
+            imgData: null,
+            vIdx: -1,
+            eIdx: -1,
+            
+            start() {
+                const saved = localStorage.getItem('galleryData');
+                if (saved) try { this.data = JSON.parse(saved); } catch(e) {}
+                if (!this.data.default) this.data.default = [];
+                this.updSel();
+                this.draw();
+                
+                document.getElementById('addBtn').onclick = () => this.add();
+                document.getElementById('camBtn').onclick = () => this.camera();
+                document.getElementById('bigBtn').onclick = () => this.chView('big');
+                document.getElementById('smallBtn').onclick = () => this.chView('small');
+                document.getElementById('listBtn').onclick = () => this.chView('list');
+                document.getElementById('groupBtn').onclick = () => this.opGrp();
+                document.getElementById('shareBtn').onclick = () => this.opSh();
+                document.getElementById('cloudBtn').onclick = () => this.opCloud();
+                document.getElementById('groupSel').onchange = () => this.swGrp();
+                document.getElementById('cancelAdd').onclick = () => this.clAdd();
+                document.getElementById('saveAdd').onclick = () => this.svImg();
+                document.getElementById('closeView').onclick = () => this.clView();
+                document.getElementById('editView').onclick = () => this.edCurr();
+                document.getElementById('delView').onclick = () => this.delCurr();
+                document.getElementById('createGrp').onclick = () => this.crGrp();
+                document.getElementById('closeGrp').onclick = () => this.clGrp();
+                document.getElementById('closeSh').onclick = () => this.clSh();
+                document.getElementById('exp').onclick = () => this.expFile();
+                document.getElementById('cop').onclick = () => this.copy();
+                document.getElementById('imp').onclick = () => this.opImp();
+                document.getElementById('chooseBtn').onclick = () => document.getElementById('importIn').click();
+                document.getElementById('cancelImp').onclick = () => this.clImp();
+                document.getElementById('doImp').onclick = () => this.doImport();
+                document.getElementById('backupCloud').onclick = () => this.backupCloud();
+                document.getElementById('restoreCloud').onclick = () => this.restoreCloud();
+                document.getElementById('closeCloud').onclick = () => this.clCloud();
+                document.getElementById('fileIn').onchange = e => this.hdFile(e);
+                document.getElementById('cameraIn').onchange = e => this.hdFile(e);
+                document.getElementById('importIn').onchange = e => this.hdImpFile(e);
+            },
+            
+            getImgs() {
+                if (!this.data[this.curr]) this.data[this.curr] = [];
+                return this.data[this.curr];
+            },
+            
+            save() {
+                localStorage.setItem('galleryData', JSON.stringify(this.data));
+            },
+            
+            add() {
+                this.eIdx = -1;
+                document.getElementById('addTitle').textContent = 'Add Image';
+                document.getElementById('saveAdd').textContent = 'Save';
+                document.getElementById('fileIn').click();
+            },
+            
+            camera() {
+                this.eIdx = -1;
+                document.getElementById('addTitle').textContent = 'Take Photo';
+                document.getElementById('saveAdd').textContent = 'Save';
+                document.getElementById('cameraIn').click();
+            },
+            
+            hdFile(e) {
+                const f = e.target.files[0];
+                if (!f) return;
+                const r = new FileReader();
+                r.onload = ev => {
+                    this.imgData = ev.target.result;
+                    document.getElementById('prev').src = this.imgData;
+                    document.getElementById('prev').classList.remove('hidden');
+                    document.getElementById('name').value = f.name.split('.')[0];
+                    document.getElementById('desc').value = '';
+                    document.getElementById('addMod').classList.add('active');
+                };
+                r.readAsDataURL(f);
+            },
+            
+            svImg() {
+                const n = document.getElementById('name').value.trim();
+                const d = document.getElementById('desc').value.trim();
+                if (!n) return alert('Enter name');
+                const imgs = this.getImgs();
+                if (this.eIdx >= 0) {
+                    imgs[this.eIdx].name = n;
+                    imgs[this.eIdx].description = d;
+                    this.eIdx = -1;
+                } else {
+                    if (!this.imgData) return alert('No image');
+                    imgs.push({id: Date.now(), name: n, description: d, data: this.imgData});
+                }
+                this.data[this.curr] = imgs;
+                this.save();
+                this.clAdd();
+                this.draw();
+            },
+            
+            clAdd() {
+                document.getElementById('addMod').classList.remove('active');
+                this.imgData = null;
+                this.eIdx = -1;
+            },
+            
+            chView(v) {
+                this.view = v;
+                this.draw();
+            },
+            
+            draw() {
+                const g = document.getElementById('gallery');
+                g.innerHTML = '';
+                const imgs = this.getImgs();
+                if (!imgs.length) {
+                    g.innerHTML = '<div class="empty"><h2>No images</h2><p>Tap Add to start</p></div>';
+                    return;
+                }
+                if (this.view === 'list') {
+                    imgs.forEach((img, i) => {
+                        const d = document.createElement('div');
+                        d.className = 'list-item';
+                        d.innerHTML = `<img src="${img.data}" class="list-image"><div class="list-content"><div style="font-weight:600">${img.name}</div><div style="font-size:14px;color:#666">${img.description.substring(0, 80) || 'No desc'}</div></div><div class="list-actions"></div>`;
+                        const a = d.querySelector('.list-actions');
+                        this.addBtns(a, i);
+                        g.appendChild(d);
+                    });
+                } else {
+                    const dv = document.createElement('div');
+                    dv.className = this.view === 'big' ? 'grid' : 'grid grid-small';
+                    imgs.forEach((img, i) => {
+                        const c = document.createElement('div');
+                        c.className = 'card';
+                        c.innerHTML = `<img src="${img.data}" class="card-image"><div class="card-body"><div class="card-title">${img.name}</div><div class="card-actions"></div></div>`;
+                        const a = c.querySelector('.card-actions');
+                        this.addBtns(a, i);
+                        dv.appendChild(c);
+                    });
+                    g.appendChild(dv);
+                }
+            },
+            
+            addBtns(p, i) {
+                const v = document.createElement('button');
+                v.className = 'btn btn-small';
+                v.textContent = 'View';
+                v.onclick = () => this.viewImg(i);
+                const e = document.createElement('button');
+                e.className = 'btn btn-small';
+                e.textContent = 'Edit';
+                e.onclick = () => this.edImg(i);
+                const d = document.createElement('button');
+                d.className = 'btn btn-small';
+                d.textContent = 'Del';
+                d.onclick = () => this.delImg(i);
+                p.append(v, e, d);
+            },
+            
+            viewImg(i) {
+                this.vIdx = i;
+                const img = this.getImgs()[i];
+                document.getElementById('viewTitle').textContent = img.name;
+                document.getElementById('viewImg').src = img.data;
+                document.getElementById('viewDesc').textContent = img.description || 'No description';
+                document.getElementById('viewMod').classList.add('active');
+            },
+            
+            clView() {
+                document.getElementById('viewMod').classList.remove('active');
+                this.vIdx = -1;
+            },
+            
+            edCurr() {
+                if (this.vIdx >= 0) this.edImg(this.vIdx);
+                this.clView();
+            },
+            
+            edImg(i) {
+                const img = this.getImgs()[i];
+                this.eIdx = i;
+                this.imgData = img.data;
+                document.getElementById('addTitle').textContent = 'Edit';
+                document.getElementById('saveAdd').textContent = 'Update';
+                document.getElementById('prev').src = img.data;
+                document.getElementById('prev').classList.remove('hidden');
+                document.getElementById('name').value = img.name;
+                document.getElementById('desc').value = img.description;
+                document.getElementById('addMod').classList.add('active');
+            },
+            
+            delCurr() {
+                if (this.vIdx >= 0) this.delImg(this.vIdx);
+                this.clView();
+            },
+            
+            delImg(i) {
+                if (!confirm('Delete?')) return;
+                const imgs = this.getImgs();
+                imgs.splice(i, 1);
+                this.data[this.curr] = imgs;
+                this.save();
+                this.draw();
+            },
+            
+            opGrp() {
+                this.drawGrps();
+                document.getElementById('groupMod').classList.add('active');
+            },
+            
+            clGrp() {
+                document.getElementById('groupMod').classList.remove('active');
+            },
+            
+            crGrp() {
+                const n = document.getElementById('newGrp').value.trim();
+                if (!n) return alert('Enter name');
+                const id = n.toLowerCase().replace(/\s+/g, '-');
+                if (this.data[id]) return alert('Exists');
+                this.data[id] = [];
+                this.data[id + '_m'] = {name: n};
+                this.save();
+                this.updSel();
+                this.drawGrps();
+                document.getElementById('newGrp').value = '';
+                this.showMsg('Created!');
+            },
+            
+            swGrp() {
+                this.curr = document.getElementById('groupSel').value;
+                this.draw();
+            },
+            
+            updSel() {
+                const s = document.getElementById('groupSel');
+                s.innerHTML = '<option value="default">Default</option>';
+                Object.keys(this.data).forEach(k => {
+                    if (!k.endsWith('_m') && k !== 'default') {
+                        const o = document.createElement('option');
+                        o.value = k;
+                        o.textContent = this.data[k + '_m']?.name || k;
+                        s.appendChild(o);
+                    }
+                });
+                s.value = this.curr;
+            },
+            
+            drawGrps() {
+                const l = document.getElementById('grpList');
+                l.innerHTML = '';
+                Object.keys(this.data).forEach(k => {
+                    if (!k.endsWith('_m') && k !== 'default') {
+                        const m = this.data[k + '_m'];
+                        const cnt = this.data[k]?.length || 0;
+                        const d = document.createElement('div');
+                        d.style.cssText = 'background:white;padding:15px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center';
+                        d.innerHTML = `<div><div style="font-weight:600">${m?.name || k}</div><div style="font-size:13px;color:#666">${cnt} image${cnt !== 1 ? 's' : ''}</div></div>`;
+                        const b = document.createElement('button');
+                        b.className = 'btn btn-small';
+                        b.textContent = 'Del';
+                        b.onclick = () => this.delGrp(k);
+                        d.appendChild(b);
+                        l.appendChild(d);
+                    }
+                });
+            },
+            
+            delGrp(k) {
+                if (!confirm('Delete group?')) return;
+                delete this.data[k];
+                delete this.data[k + '_m'];
+                if (this.curr === k) this.curr = 'default';
+                this.save();
+                this.updSel();
+                this.drawGrps();
+                this.draw();
+                this.showMsg('Deleted!');
+            },
+            
+            opSh() {
+                document.getElementById('shareMod').classList.add('active');
+            },
+            
+            clSh() {
+                document.getElementById('shareMod').classList.remove('active');
+            },
+            
+            expFile() {
+                const imgs = this.getImgs();
+                const m = this.data[this.curr + '_m'] || {name: 'Gallery'};
+                const exp = {groupName: m.name, images: imgs, exported: new Date().toISOString()};
+                const blob = new Blob([JSON.stringify(exp)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `gallery-${this.curr}-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                this.showMsg('Exported!');
+                this.clSh();
+            },
+            
+            copy() {
+                const imgs = this.getImgs();
+                const m = this.data[this.curr + '_m'] || {name: 'Gallery'};
+                const exp = {groupName: m.name, images: imgs, exported: new Date().toISOString()};
+                navigator.clipboard.writeText(JSON.stringify(exp)).then(() => {
+                    this.showMsg('Copied!');
+                    this.clSh();
+                }).catch(() => alert('Copy failed'));
+            },
+            
+            opImp() {
+                this.clSh();
+                document.getElementById('importMod').classList.add('active');
+            },
+            
+            clImp() {
+                document.getElementById('importMod').classList.remove('active');
+                document.getElementById('paste').value = '';
+            },
+            
+            hdImpFile(e) {
+                const f = e.target.files[0];
+                if (!f) return;
+                const r = new FileReader();
+                r.onload = ev => {
+                    try {
+                        const d = JSON.parse(ev.target.result);
+                        this.procImp(d);
+                    } catch(e) {
+                        alert('Invalid file');
+                    }
+                };
+                r.readAsText(f);
+            },
+            
+            doImport() {
+                const txt = document.getElementById('paste').value.trim();
+                if (!txt) return alert('Paste data or choose file');
+                try {
+                    const d = JSON.parse(txt);
+                    this.procImp(d);
+                } catch(e) {
+                    alert('Invalid data');
+                }
+            },
+            
+            procImp(d) {
+                if (!d.groupName || !d.images) return alert('Invalid format');
+                const id = d.groupName.toLowerCase().replace(/\s+/g, '-');
+                let finalId = id;
+                let cnt = 1;
+                while (this.data[finalId]) finalId = `${id}-${cnt++}`;
+                this.data[finalId] = d.images;
+                this.data[finalId + '_m'] = {name: d.groupName, imported: new Date().toISOString()};
+                this.save();
+                this.updSel();
+                this.clImp();
+                this.showMsg('Imported!');
+            },
+            
+            showMsg(txt) {
+                const m = document.getElementById('msg');
+                m.textContent = txt;
+                m.classList.add('show');
+                setTimeout(() => m.classList.remove('show'), 3000);
+            },
+            
+            opCloud() {
+                document.getElementById('cloudMod').classList.add('active');
+            },
+            
+            clCloud() {
+                document.getElementById('cloudMod').classList.remove('active');
+            },
+            
+            backupCloud() {
+                const backup = {
+                    version: 1,
+                    timestamp: new Date().toISOString(),
+                    groups: this.data
+                };
+                const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `gallery-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                this.showMsg('Backup saved! Check Downloads/iCloud Drive');
+                this.clCloud();
+            },
+            
+            restoreCloud() {
+                this.clCloud();
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = e => {
+                    const f = e.target.files[0];
+                    if (!f) return;
+                    const r = new FileReader();
+                    r.onload = ev => {
+                        try {
+                            const backup = JSON.parse(ev.target.result);
+                            if (!backup.groups) return alert('Invalid backup file');
+                            if (confirm('This will replace all current data. Continue?')) {
+                                this.data = backup.groups;
+                                this.curr = 'default';
+                                this.save();
+                                this.updSel();
+                                this.draw();
+                                this.showMsg('Restored from iCloud!');
+                            }
+                        } catch(e) {
+                            alert('Invalid backup file');
+                        }
+                    };
+                    r.readAsText(f);
+                };
+                input.click();
+            }
+        };
+        
+        window.onload = () => app.start();
+    </script>
+</body>
+</html>
