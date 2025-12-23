@@ -18,7 +18,16 @@
         .btn-primary { background: #34c759; color: white; }
         .btn-warning { background: #ff9500; color: white; }
         .btn-small { padding: 6px 12px; font-size: 13px; }
-        .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; position: relative; }
+        .view-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 50; }
+        .view-btn { width: 56px; height: 56px; border-radius: 50%; background: #007aff; color: white; border: none; font-size: 24px; box-shadow: 0 4px 12px rgba(0,122,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .view-btn:active { transform: scale(0.95); }
+        .view-menu { position: absolute; bottom: 70px; right: 0; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; }
+        .view-menu.show { display: flex; }
+        .view-option { padding: 15px 20px; border: none; background: white; text-align: left; font-size: 16px; cursor: pointer; border-bottom: 1px solid #e5e5e7; }
+        .view-option:last-child { border-bottom: none; }
+        .view-option:active { background: #f0f8ff; }
+        .view-option.active { background: #e5f2ff; font-weight: 600; }
         .grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -53,19 +62,16 @@
 <body>
     <div class="header">
         <h1>📸 Gallery</h1>
-        <select id="groupSel"></select>
+        <div class="toolbar">
+            <select id="groupSel"></select>
+            <button class="btn btn-warning btn-small" id="manageBtn">⚙️ Manage</button>
+        </div>
         <div class="toolbar">
             <input type="file" id="fileIn" accept="image/*" class="hidden">
             <input type="file" id="cameraIn" accept="image/*" capture="environment" class="hidden">
             <input type="file" id="importIn" accept=".json" class="hidden">
             <button class="btn btn-primary" id="addBtn">+ Add</button>
             <button class="btn btn-primary" id="camBtn">📷 Camera</button>
-            <button class="btn btn-small" id="bigBtn">Big</button>
-            <button class="btn btn-small" id="smallBtn">Small</button>
-            <button class="btn btn-small" id="listBtn">List</button>
-            <button class="btn btn-small" id="groupBtn">Groups</button>
-            <button class="btn btn-warning btn-small" id="shareBtn">Share</button>
-            <button class="btn btn-small" id="cloudBtn">☁️ iCloud</button>
         </div>
     </div>
     <div class="container">
@@ -73,17 +79,20 @@
         <div id="gallery"></div>
     </div>
     
+    <div class="view-toggle">
+        <div class="view-menu" id="viewMenu">
+            <button class="view-option" id="bigOpt">📏 Big Grid</button>
+            <button class="view-option" id="smallOpt">🔲 Small Grid</button>
+            <button class="view-option" id="listOpt">📋 List View</button>
+        </div>
+        <button class="view-btn" id="viewBtn">☰</button>
+    </div>
+    
     <div id="addMod" class="modal"><div class="modal-content"><div class="modal-header" id="addTitle">Add</div><div class="modal-body"><img id="prev" class="modal-image hidden"><div class="form-group"><label class="form-label">Name</label><input id="name" class="form-input"></div><div class="form-group"><label class="form-label">Description</label><textarea id="desc" class="form-textarea"></textarea></div></div><div class="modal-actions"><button class="btn" id="cancelAdd">Cancel</button><button class="btn btn-primary" id="saveAdd">Save</button></div></div></div>
     
     <div id="viewMod" class="modal"><div class="modal-content"><div class="modal-header" id="viewTitle"></div><div class="modal-body"><img id="viewImg" class="modal-image"><div class="form-label">DESCRIPTION</div><div id="viewDesc"></div></div><div class="modal-actions"><button class="btn" id="delView" style="background:#ff3b30;color:white">Delete</button><button class="btn" id="editView">Edit</button><button class="btn btn-primary" id="closeView">Close</button></div></div></div>
     
-    <div id="groupMod" class="modal"><div class="modal-content"><div class="modal-header">Groups</div><div class="modal-body"><div class="form-group"><label class="form-label">New Group</label><input id="newGrp" class="form-input"></div><button class="btn btn-primary" id="createGrp">Create</button><div id="grpList" style="margin-top:20px"></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeGrp">Close</button></div></div></div>
-    
-    <div id="shareMod" class="modal"><div class="modal-content"><div class="modal-header">Share</div><div class="modal-body"><div class="share-option" id="exp"><b>📤 Export File</b><div style="font-size:13px;color:#666">Download to share via AirDrop</div></div><div class="share-option" id="cop"><b>🔗 Copy Data</b><div style="font-size:13px;color:#666">Copy to clipboard</div></div><div class="share-option" id="imp"><b>📥 Import</b><div style="font-size:13px;color:#666">Import from file or clipboard</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeSh">Close</button></div></div></div>
-    
-    <div id="importMod" class="modal"><div class="modal-content"><div class="modal-header">Import</div><div class="modal-body"><button class="btn" id="chooseBtn">Choose File</button><div class="form-group" style="margin-top:15px"><label class="form-label">Or Paste Data</label><textarea id="paste" class="form-textarea"></textarea></div></div><div class="modal-actions"><button class="btn" id="cancelImp">Cancel</button><button class="btn btn-primary" id="doImp">Import</button></div></div></div>
-
-    <div id="cloudMod" class="modal"><div class="modal-content"><div class="modal-header">iCloud Sync</div><div class="modal-body"><div class="share-option" id="backupCloud"><b>☁️ Backup to iCloud</b><div style="font-size:13px;color:#666">Export all groups as file to save to iCloud Drive</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore from iCloud</b><div style="font-size:13px;color:#666">Import backup file from iCloud Drive</div></div><div style="margin-top:15px;padding:15px;background:#f0f8ff;border-radius:8px;font-size:13px"><b>💡 How to sync:</b><br>1. Tap "Backup to iCloud" to save<br>2. File saves to iCloud Drive/Downloads<br>3. On other device, tap "Restore from iCloud"<br>4. Select your backup file</div></div><div class="modal-actions"><button class="btn btn-primary" id="closeCloud">Close</button></div></div></div>
+    <div id="manageMod" class="modal"><div class="modal-content"><div class="modal-header">Manage Gallery</div><div class="modal-body"><div style="margin-bottom:25px"><b>📁 GROUPS</b></div><select id="groupSelModal" style="width:100%;margin-bottom:15px"></select><div class="form-group"><input id="newGrp" class="form-input" placeholder="New group name"></div><button class="btn btn-primary" id="createGrp" style="margin-bottom:10px">Create Group</button><button class="btn" id="delGrp" style="margin-bottom:30px">Delete Current Group</button><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📤 SHARE CURRENT GROUP</b></div><div class="share-option" id="exp"><b>📁 Export Group</b><div style="font-size:13px;color:#666">Save current group to share via AirDrop</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📥 IMPORT</b></div><div class="share-option" id="imp"><b>📂 Import Group</b><div style="font-size:13px;color:#666">Add a group someone shared with you</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>☁️ BACKUP</b></div><div class="share-option" id="backupCloud"><b>💾 Backup All</b><div style="font-size:13px;color:#666">Save all groups to file</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore All</b><div style="font-size:13px;color:#666">Restore from backup file</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeManage">Close</button></div></div></div>
 
     <script>
         const app = {
@@ -100,15 +109,19 @@
                 if (!this.data.default) this.data.default = [];
                 this.updSel();
                 this.draw();
-                
+                this.bind();
+                // Set initial active view
+                document.getElementById('bigOpt').classList.add('active');
+            },
+            
+            bind() {
                 document.getElementById('addBtn').onclick = () => this.add();
                 document.getElementById('camBtn').onclick = () => this.camera();
-                document.getElementById('bigBtn').onclick = () => this.chView('big');
-                document.getElementById('smallBtn').onclick = () => this.chView('small');
-                document.getElementById('listBtn').onclick = () => this.chView('list');
-                document.getElementById('groupBtn').onclick = () => this.opGrp();
-                document.getElementById('shareBtn').onclick = () => this.opSh();
-                document.getElementById('cloudBtn').onclick = () => this.opCloud();
+                document.getElementById('viewBtn').onclick = () => this.toggleViewMenu();
+                document.getElementById('bigOpt').onclick = () => this.chView('big');
+                document.getElementById('smallOpt').onclick = () => this.chView('small');
+                document.getElementById('listOpt').onclick = () => this.chView('list');
+                document.getElementById('manageBtn').onclick = () => this.opManage();
                 document.getElementById('groupSel').onchange = () => this.swGrp();
                 document.getElementById('cancelAdd').onclick = () => this.clAdd();
                 document.getElementById('saveAdd').onclick = () => this.svImg();
@@ -116,20 +129,30 @@
                 document.getElementById('editView').onclick = () => this.edCurr();
                 document.getElementById('delView').onclick = () => this.delCurr();
                 document.getElementById('createGrp').onclick = () => this.crGrp();
-                document.getElementById('closeGrp').onclick = () => this.clGrp();
-                document.getElementById('closeSh').onclick = () => this.clSh();
+                document.getElementById('delGrp').onclick = () => this.delCurrGrp();
+                document.getElementById('closeManage').onclick = () => this.clManage();
+                document.getElementById('groupSelModal').onchange = () => this.swGrpModal();
                 document.getElementById('exp').onclick = () => this.expFile();
-                document.getElementById('cop').onclick = () => this.copy();
-                document.getElementById('imp').onclick = () => this.opImp();
-                document.getElementById('chooseBtn').onclick = () => document.getElementById('importIn').click();
-                document.getElementById('cancelImp').onclick = () => this.clImp();
-                document.getElementById('doImp').onclick = () => this.doImport();
+                document.getElementById('imp').onclick = () => this.impFile();
                 document.getElementById('backupCloud').onclick = () => this.backupCloud();
                 document.getElementById('restoreCloud').onclick = () => this.restoreCloud();
-                document.getElementById('closeCloud').onclick = () => this.clCloud();
                 document.getElementById('fileIn').onchange = e => this.hdFile(e);
                 document.getElementById('cameraIn').onchange = e => this.hdFile(e);
                 document.getElementById('importIn').onchange = e => this.hdImpFile(e);
+                
+                // Close view menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    const menu = document.getElementById('viewMenu');
+                    const btn = document.getElementById('viewBtn');
+                    if (!menu.contains(e.target) && e.target !== btn) {
+                        menu.classList.remove('show');
+                    }
+                });
+            },
+            
+            toggleViewMenu() {
+                const menu = document.getElementById('viewMenu');
+                menu.classList.toggle('show');
             },
             
             getImgs() {
@@ -158,16 +181,18 @@
             hdFile(e) {
                 const f = e.target.files[0];
                 if (!f) return;
-                const r = new FileReader();
-                r.onload = ev => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
                     this.imgData = ev.target.result;
-                    document.getElementById('prev').src = this.imgData;
-                    document.getElementById('prev').classList.remove('hidden');
+                    const prev = document.getElementById('prev');
+                    prev.src = this.imgData;
+                    prev.classList.remove('hidden');
                     document.getElementById('name').value = f.name.split('.')[0];
                     document.getElementById('desc').value = '';
                     document.getElementById('addMod').classList.add('active');
                 };
-                r.readAsDataURL(f);
+                reader.readAsDataURL(f);
+                e.target.value = '';
             },
             
             svImg() {
@@ -187,6 +212,8 @@
                 this.save();
                 this.clAdd();
                 this.draw();
+                document.getElementById('fileIn').value = '';
+                document.getElementById('cameraIn').value = '';
             },
             
             clAdd() {
@@ -197,6 +224,12 @@
             
             chView(v) {
                 this.view = v;
+                document.getElementById('viewMenu').classList.remove('show');
+                // Update active state
+                document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+                if (v === 'big') document.getElementById('bigOpt').classList.add('active');
+                if (v === 'small') document.getElementById('smallOpt').classList.add('active');
+                if (v === 'list') document.getElementById('listOpt').classList.add('active');
                 this.draw();
             },
             
@@ -294,13 +327,33 @@
                 this.draw();
             },
             
-            opGrp() {
-                this.drawGrps();
-                document.getElementById('groupMod').classList.add('active');
+            opManage() {
+                this.updModalSel();
+                document.getElementById('manageMod').classList.add('active');
             },
             
-            clGrp() {
-                document.getElementById('groupMod').classList.remove('active');
+            clManage() {
+                document.getElementById('manageMod').classList.remove('active');
+            },
+            
+            updModalSel() {
+                const s = document.getElementById('groupSelModal');
+                s.innerHTML = '<option value="default">Default</option>';
+                Object.keys(this.data).forEach(k => {
+                    if (!k.endsWith('_m') && k !== 'default') {
+                        const o = document.createElement('option');
+                        o.value = k;
+                        o.textContent = this.data[k + '_m']?.name || k;
+                        s.appendChild(o);
+                    }
+                });
+                s.value = this.curr;
+            },
+            
+            swGrpModal() {
+                this.curr = document.getElementById('groupSelModal').value;
+                document.getElementById('groupSel').value = this.curr;
+                this.draw();
             },
             
             crGrp() {
@@ -311,10 +364,25 @@
                 this.data[id] = [];
                 this.data[id + '_m'] = {name: n};
                 this.save();
+                this.curr = id;
                 this.updSel();
-                this.drawGrps();
+                this.updModalSel();
                 document.getElementById('newGrp').value = '';
-                this.showMsg('Created!');
+                this.draw();
+                this.showMsg('Group created!');
+            },
+            
+            delCurrGrp() {
+                if (this.curr === 'default') return alert('Cannot delete default group');
+                if (!confirm('Delete current group and all its images?')) return;
+                delete this.data[this.curr];
+                delete this.data[this.curr + '_m'];
+                this.curr = 'default';
+                this.save();
+                this.updSel();
+                this.updModalSel();
+                this.draw();
+                this.showMsg('Group deleted!');
             },
             
             swGrp() {
@@ -336,46 +404,6 @@
                 s.value = this.curr;
             },
             
-            drawGrps() {
-                const l = document.getElementById('grpList');
-                l.innerHTML = '';
-                Object.keys(this.data).forEach(k => {
-                    if (!k.endsWith('_m') && k !== 'default') {
-                        const m = this.data[k + '_m'];
-                        const cnt = this.data[k]?.length || 0;
-                        const d = document.createElement('div');
-                        d.style.cssText = 'background:white;padding:15px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center';
-                        d.innerHTML = `<div><div style="font-weight:600">${m?.name || k}</div><div style="font-size:13px;color:#666">${cnt} image${cnt !== 1 ? 's' : ''}</div></div>`;
-                        const b = document.createElement('button');
-                        b.className = 'btn btn-small';
-                        b.textContent = 'Del';
-                        b.onclick = () => this.delGrp(k);
-                        d.appendChild(b);
-                        l.appendChild(d);
-                    }
-                });
-            },
-            
-            delGrp(k) {
-                if (!confirm('Delete group?')) return;
-                delete this.data[k];
-                delete this.data[k + '_m'];
-                if (this.curr === k) this.curr = 'default';
-                this.save();
-                this.updSel();
-                this.drawGrps();
-                this.draw();
-                this.showMsg('Deleted!');
-            },
-            
-            opSh() {
-                document.getElementById('shareMod').classList.add('active');
-            },
-            
-            clSh() {
-                document.getElementById('shareMod').classList.remove('active');
-            },
-            
             expFile() {
                 const imgs = this.getImgs();
                 const m = this.data[this.curr + '_m'] || {name: 'Gallery'};
@@ -387,35 +415,22 @@
                 a.download = `gallery-${this.curr}-${Date.now()}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                this.showMsg('Exported!');
-                this.clSh();
+                this.showMsg('Exported! Share via AirDrop');
             },
             
-            copy() {
-                const imgs = this.getImgs();
-                const m = this.data[this.curr + '_m'] || {name: 'Gallery'};
-                const exp = {groupName: m.name, images: imgs, exported: new Date().toISOString()};
-                navigator.clipboard.writeText(JSON.stringify(exp)).then(() => {
-                    this.showMsg('Copied!');
-                    this.clSh();
-                }).catch(() => alert('Copy failed'));
-            },
-            
-            opImp() {
-                this.clSh();
-                document.getElementById('importMod').classList.add('active');
-            },
-            
-            clImp() {
-                document.getElementById('importMod').classList.remove('active');
-                document.getElementById('paste').value = '';
+            impFile() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = e => this.hdImpFile(e);
+                input.click();
             },
             
             hdImpFile(e) {
                 const f = e.target.files[0];
                 if (!f) return;
-                const r = new FileReader();
-                r.onload = ev => {
+                const reader = new FileReader();
+                reader.onload = ev => {
                     try {
                         const d = JSON.parse(ev.target.result);
                         this.procImp(d);
@@ -423,18 +438,8 @@
                         alert('Invalid file');
                     }
                 };
-                r.readAsText(f);
-            },
-            
-            doImport() {
-                const txt = document.getElementById('paste').value.trim();
-                if (!txt) return alert('Paste data or choose file');
-                try {
-                    const d = JSON.parse(txt);
-                    this.procImp(d);
-                } catch(e) {
-                    alert('Invalid data');
-                }
+                reader.readAsText(f);
+                e.target.value = '';
             },
             
             procImp(d) {
@@ -447,8 +452,8 @@
                 this.data[finalId + '_m'] = {name: d.groupName, imported: new Date().toISOString()};
                 this.save();
                 this.updSel();
-                this.clImp();
-                this.showMsg('Imported!');
+                this.updModalSel();
+                this.showMsg('Imported! Check dropdown');
             },
             
             showMsg(txt) {
@@ -456,14 +461,6 @@
                 m.textContent = txt;
                 m.classList.add('show');
                 setTimeout(() => m.classList.remove('show'), 3000);
-            },
-            
-            opCloud() {
-                document.getElementById('cloudMod').classList.add('active');
-            },
-            
-            clCloud() {
-                document.getElementById('cloudMod').classList.remove('active');
             },
             
             backupCloud() {
@@ -479,36 +476,35 @@
                 a.download = `gallery-backup-${new Date().toISOString().split('T')[0]}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                this.showMsg('Backup saved! Check Downloads/iCloud Drive');
-                this.clCloud();
+                this.showMsg('Backup saved!');
             },
             
             restoreCloud() {
-                this.clCloud();
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.json';
                 input.onchange = e => {
                     const f = e.target.files[0];
                     if (!f) return;
-                    const r = new FileReader();
-                    r.onload = ev => {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
                         try {
                             const backup = JSON.parse(ev.target.result);
-                            if (!backup.groups) return alert('Invalid backup file');
-                            if (confirm('This will replace all current data. Continue?')) {
+                            if (!backup.groups) return alert('Invalid backup');
+                            if (confirm('Replace all data?')) {
                                 this.data = backup.groups;
                                 this.curr = 'default';
                                 this.save();
                                 this.updSel();
+                                this.updModalSel();
                                 this.draw();
-                                this.showMsg('Restored from iCloud!');
+                                this.showMsg('Restored!');
                             }
                         } catch(e) {
-                            alert('Invalid backup file');
+                            alert('Invalid backup');
                         }
                     };
-                    r.readAsText(f);
+                    reader.readAsText(f);
                 };
                 input.click();
             }
