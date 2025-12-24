@@ -215,12 +215,14 @@
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
         .modal-header {
             padding: 30px 30px 20px;
             border-bottom: 2px solid #f0f0f0;
+            flex-shrink: 0;
         }
         .modal-header h2 {
             font-size: 24px;
@@ -229,6 +231,8 @@
         }
         .modal-body {
             padding: 30px;
+            overflow-y: auto;
+            flex: 1;
         }
         .visual-step {
             background: white;
@@ -301,10 +305,14 @@
             margin-top: 10px;
         }
         .nav-buttons {
+            position: relative;
             display: flex;
             gap: 15px;
-            margin-top: 20px;
-            padding: 0 30px 30px;
+            padding: 20px 30px;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
         .nav-btn {
             flex: 1;
