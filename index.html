@@ -177,6 +177,208 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        .help-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .help-btn:hover {
+            background: #28a745;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-header {
+            padding: 30px 30px 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .modal-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .visual-step {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .visual-step.active {
+            border-color: #007aff;
+            background: #f0f8ff;
+            box-shadow: 0 4px 20px rgba(0,122,255,0.2);
+            transform: scale(1.02);
+        }
+        .step-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: #e0e0e0;
+            color: #666;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .visual-step.active .step-number {
+            background: #007aff;
+            color: white;
+        }
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        .step-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .step-image {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            margin: 15px 0;
+        }
+        .share-button-demo {
+            background: #f8f9fa;
+            border: 3px dashed #007aff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .share-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .share-button-demo p {
+            color: #007aff;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        .share-button-demo small {
+            color: #666;
+            display: block;
+            margin-top: 10px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 0 30px 30px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn.prev {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .nav-btn.next {
+            background: #007aff;
+            color: white;
+        }
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .nav-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f0f0f0;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-btn:hover {
+            background: #e0e0e0;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #007aff;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .tip-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .tip-box strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .tip-box p {
+            color: #856404;
+            margin: 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -216,9 +418,108 @@
         </div>
 
         <button class="btn" id="openBtn" disabled onclick="openGallery()">Open Gallery</button>
+        
+        <button class="help-btn" onclick="openGuide()">📖 Step-by-Step Visual Guide</button>
+    </div>
+
+    <div class="modal" id="guideModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeGuide()">✕</button>
+            <div class="modal-header">
+                <h2>Step-by-Step Installation Guide</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 16.67%"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="visual-step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Click "Open Gallery"</div>
+                    <div class="step-description">
+                        First, close this guide and click the blue "Open Gallery" button on the main page. The Gallery app will load in Safari.
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Tip:</strong>
+                        <p>Make sure you've checked the "I have read" checkbox first, or the button won't work!</p>
+                    </div>
+                </div>
+
+                <div class="visual-step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Find the Share Button</div>
+                    <div class="step-description">
+                        After the Gallery opens, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons.
+                    </div>
+                    <div class="share-button-demo">
+                        <div class="share-icon">⎙</div>
+                        <p>Tap this Share button</p>
+                        <small>It looks like a box with an arrow pointing up</small>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Where is it?</strong>
+                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button. It's the middle button in the toolbar.</p>
+                    </div>
+                </div>
+
+                <div class="visual-step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Tap "Add to Home Screen"</div>
+                    <div class="step-description">
+                        A menu will slide up from the bottom. <strong>Scroll down</strong> in this menu until you see "Add to Home Screen". Tap it.
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Can't find it?</strong>
+                        <p>The "Add to Home Screen" option is usually near the middle of the share menu. Keep scrolling down if you don't see it right away. It has a plus (+) icon next to it.</p>
+                    </div>
+                </div>
+
+                <div class="visual-step" id="step4">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Confirm Installation</div>
+                    <div class="step-description">
+                        A preview screen will appear showing the app icon and name "Gallery". Tap the blue "Add" button in the <strong>top-right corner</strong>.
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Almost done!</strong>
+                        <p>After tapping "Add", Safari will close and you'll see your home screen.</p>
+                    </div>
+                </div>
+
+                <div class="visual-step" id="step5">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Find Your App</div>
+                    <div class="step-description">
+                        Look at your iPhone home screen. You'll see a new icon with a 📸 camera emoji. This is your Gallery app!
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Success!</strong>
+                        <p>Tap the Gallery icon whenever you want to use the app. It works just like any other app on your phone!</p>
+                    </div>
+                </div>
+
+                <div class="visual-step" id="step6">
+                    <div class="step-number">6</div>
+                    <div class="step-title">You're All Set! 🎉</div>
+                    <div class="step-description">
+                        Congratulations! The Gallery app is now installed on your iPhone. You can start adding photos, organizing them into groups, and sharing collections with friends.
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong>
+                        <p>You can share your photo groups with others by tapping the ⚙️ Manage button inside the app!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevStep()" disabled>← Previous</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
         // Detect if NOT Safari
         function isSafari() {
             const ua = navigator.userAgent;
@@ -228,7 +529,6 @@
             const isFirefox = /FxiOS/.test(ua);
             const isSafariUA = /Safari/.test(ua);
             
-            // It's Safari if it's iOS, has WebKit, is not Chrome/Firefox, and has Safari in UA
             return isIOS && isWebkit && !isChrome && !isFirefox && isSafariUA;
         }
 
@@ -250,14 +550,64 @@
         }
 
         function openGallery() {
-            // Check one more time if Safari
             if (!isSafari()) {
                 alert('⚠️ Please open this page in Safari browser!\n\nThis app will not work properly in other browsers. Copy this link and paste it into Safari.');
                 return;
             }
-            
-            // Open gallery
             window.location.href = 'gallery.html';
+        }
+
+        function openGuide() {
+            document.getElementById('guideModal').classList.add('active');
+            updateStepDisplay();
+        }
+
+        function closeGuide() {
+            document.getElementById('guideModal').classList.remove('active');
+            currentStep = 1;
+            updateStepDisplay();
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepDisplay();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+
+        function updateStepDisplay() {
+            // Update all steps
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById('step' + i);
+                if (i === currentStep) {
+                    step.classList.add('active');
+                    step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    step.classList.remove('active');
+                }
+            }
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = 'Close Guide ✓';
+                nextBtn.onclick = closeGuide;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.onclick = nextStep;
+            }
+
+            // Update progress bar
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
         }
 
         // Prevent accidental form submission
@@ -265,6 +615,13 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 toggleCheckbox();
+            }
+        });
+
+        // Close modal on background click
+        document.getElementById('guideModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeGuide();
             }
         });
     </script>
