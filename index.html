@@ -95,20 +95,20 @@
             font-weight: bold;
         }
         .important {
-            background: #e3f2fd;
-            border-left: 4px solid #007aff;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
             padding: 15px;
             margin: 20px 0;
             border-radius: 8px;
         }
         .important strong {
-            color: #0056b3;
+            color: #856404;
             display: block;
             margin-bottom: 8px;
             font-size: 16px;
         }
         .important p {
-            color: #004085;
+            color: #856404;
             margin: 0;
             font-size: 14px;
             line-height: 1.6;
@@ -405,29 +405,29 @@
             <p>This app ONLY works in Safari browser. If you're using Chrome, Firefox, or another browser, please open this page in Safari first.</p>
         </div>
 
-        <div class="steps">
-            <div class="steps-title">Installation Instructions:</div>
-            <div class="step">Tap the blue "Open Gallery" button below</div>
-            <div class="step">Wait for the Gallery app to load</div>
-            <div class="step">Tap the Share button (⎙) at the bottom of Safari</div>
-            <div class="step">Scroll down and tap "Add to Home Screen"</div>
-            <div class="step">Tap "Add" in the top right corner</div>
-            <div class="step">The Gallery icon will appear on your home screen!</div>
+        <div class="important">
+            <strong>📋 STEP 1: Read the Visual Guide First</strong>
+            <p>Before clicking anything else, tap the <strong>GREEN button below</strong> to open the step-by-step visual guide. Read through ALL 6 steps carefully - this is just for reading and understanding. You won't do any actions while the guide is open.</p>
         </div>
 
-        <div class="important">
-            <strong>📝 When to follow these steps:</strong>
-            <p><strong>AFTER</strong> clicking the blue button below, you will see the Gallery app open. <strong>That is when</strong> you should tap the Share button (⎙) at the bottom of your screen and follow the steps above to add it to your home screen.</p>
+        <button class="help-btn" onclick="openGuide()">📖 Step-by-Step Visual Guide (START HERE)</button>
+
+        <div class="important" style="margin-top: 25px;">
+            <strong>📋 STEP 2: Confirm You've Read Everything</strong>
+            <p>After you've finished reading the entire visual guide, check the box below to confirm you understand all the steps.</p>
         </div>
 
         <div class="checkbox-container" onclick="toggleCheckbox()">
-            <input type="checkbox" id="confirmRead" onchange="checkButton()">
-            <label for="confirmRead">I have read and understood all the instructions above</label>
+            <input type="checkbox" id="confirmRead" onchange="checkButton()" disabled>
+            <label for="confirmRead">I have read the complete visual guide and understand all 6 steps</label>
+        </div>
+
+        <div class="important" style="margin-top: 15px;">
+            <strong>📋 STEP 3: Open the Gallery</strong>
+            <p>Once you've checked the box above, click the blue "Open Gallery" button below. <strong>After</strong> the Gallery opens, that's when you'll follow the steps you learned in the guide (tap Share button, etc.)</p>
         </div>
 
         <button class="btn" id="openBtn" disabled onclick="openGallery()">Open Gallery</button>
-        
-        <button class="help-btn" onclick="openGuide()">📖 Step-by-Step Visual Guide</button>
     </div>
 
     <div class="modal" id="guideModal">
@@ -435,6 +435,7 @@
             <button class="close-btn" onclick="closeGuide()">✕</button>
             <div class="modal-header">
                 <h2>Step-by-Step Installation Guide</h2>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Read all steps carefully - Do NOT perform any actions while reading this guide!</p>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressBar" style="width: 16.67%"></div>
                 </div>
@@ -442,21 +443,21 @@
             <div class="modal-body">
                 <div class="visual-step active" id="step1">
                     <div class="step-number">1</div>
-                    <div class="step-title">Click "Open Gallery"</div>
+                    <div class="step-title">Close This Guide & Click "Open Gallery"</div>
                     <div class="step-description">
-                        First, close this guide and click the blue "Open Gallery" button on the main page. The Gallery app will load in Safari.
+                        After you finish reading all 6 steps in this guide, you'll close this guide and return to the main page. Then you'll click the blue "Open Gallery" button. The Gallery app will load in Safari.
                     </div>
                     <div class="tip-box">
-                        <strong>💡 Tip:</strong>
-                        <p>Make sure you've checked the "I have read" checkbox first, or the button won't work!</p>
+                        <strong>⚠️ Important:</strong>
+                        <p>Don't do this step yet! Just read and understand. You'll do all these actions AFTER you finish reading this entire guide.</p>
                     </div>
                 </div>
 
                 <div class="visual-step" id="step2">
                     <div class="step-number">2</div>
-                    <div class="step-title">Find the Share Button</div>
+                    <div class="step-title">Find the Share Button (After Gallery Opens)</div>
                     <div class="step-description">
-                        After the Gallery opens, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons.
+                        After the Gallery opens on your screen, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons.
                     </div>
                     <div class="share-button-demo">
                         <div class="share-icon">⎙</div>
@@ -465,7 +466,7 @@
                     </div>
                     <div class="tip-box">
                         <strong>💡 Where is it?</strong>
-                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari between the back/forward arrows, or after clicking the <strong>(...)</strong> button to the bottom right of Safari.</p>
+                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button. It's the middle button in the toolbar.</p>
                     </div>
                 </div>
 
@@ -507,13 +508,16 @@
 
                 <div class="visual-step" id="step6">
                     <div class="step-number">6</div>
-                    <div class="step-title">You're All Set! 🎉</div>
+                    <div class="step-title">You're Done Reading! 🎉</div>
                     <div class="step-description">
-                        Congratulations! The Gallery app is now installed on your iPhone. You can start adding photos, organizing them into groups, and sharing collections with friends.
+                        You've now read all the steps! Remember: you haven't actually done anything yet - you've just learned what to do. Now close this guide and follow the 3 steps on the main page.
                     </div>
                     <div class="tip-box">
-                        <strong>💡 Pro Tip:</strong>
-                        <p>You can share your photo groups with others by tapping the ⚙️ Manage button inside the app!</p>
+                        <strong>✅ What to do next:</strong>
+                        <p><strong>1.</strong> Close this guide<br>
+                        <strong>2.</strong> Check the confirmation box on the main page<br>
+                        <strong>3.</strong> Click "Open Gallery"<br>
+                        <strong>4.</strong> THEN perform all the steps you just learned!</p>
                     </div>
                 </div>
             </div>
@@ -567,6 +571,7 @@
 
         function openGuide() {
             document.getElementById('guideModal').classList.add('active');
+            document.getElementById('confirmRead').disabled = false;
             updateStepDisplay();
         }
 
@@ -606,10 +611,10 @@
             document.getElementById('prevBtn').disabled = currentStep === 1;
             const nextBtn = document.getElementById('nextBtn');
             if (currentStep === totalSteps) {
-                nextBtn.textContent = 'Close Guide ✓';
+                nextBtn.textContent = 'Done Reading - Close Guide ✓';
                 nextBtn.onclick = closeGuide;
             } else {
-                nextBtn.textContent = 'Next →';
+                nextBtn.textContent = 'Next Step →';
                 nextBtn.onclick = nextStep;
             }
 
