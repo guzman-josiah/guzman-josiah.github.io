@@ -406,8 +406,8 @@
         </div>
 
         <div class="important">
-            <strong>📋 STEP 1: Read the Visual Guide First</strong>
-            <p>Before clicking anything else, tap the <strong>GREEN button below</strong> to open the step-by-step visual guide. Read through ALL 6 steps carefully - this is just for reading and understanding. You won't do any actions while the guide is open.</p>
+            <strong>📋 STEP 1: Read all text from top to bottom</strong>
+            <p>Read EVERYTHING on every page from top to bottom, and before clicking anything else, tap the <strong>GREEN button below</strong> to open the step-by-step visual guide. Read through ALL 6 steps carefully - this is just for reading and understanding. You won't do any actions while the guide is open.</p>
         </div>
 
         <button class="help-btn" onclick="openGuide()">📖 Step-by-Step Visual Guide (START HERE)</button>
@@ -417,8 +417,8 @@
             <p>After you've finished reading the entire visual guide, check the box below to confirm you understand all the steps.</p>
         </div>
 
-        <div class="checkbox-container" id="checkboxContainer">
-            <input type="checkbox" id="confirmRead" disabled>
+        <div class="checkbox-container" onclick="toggleCheckbox()">
+            <input type="checkbox" id="confirmRead" onchange="checkButton()" disabled>
             <label for="confirmRead">I have read the complete visual guide and understand all 6 steps</label>
         </div>
 
@@ -435,7 +435,7 @@
             <button class="close-btn" onclick="closeGuide()">✕</button>
             <div class="modal-header">
                 <h2>Step-by-Step Installation Guide</h2>
-                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Read all steps carefully - Do NOT perform any actions while reading this guide!</p>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Read each and all 6 steps carefully, and press the blue Next Step button at the bottom after every step that you read - Do NOT perform any actions just yet while reading this guide!</p>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressBar" style="width: 16.67%"></div>
                 </div>
@@ -443,13 +443,13 @@
             <div class="modal-body">
                 <div class="visual-step active" id="step1">
                     <div class="step-number">1</div>
-                    <div class="step-title">Close This Guide & Click "Open Gallery"</div>
+                    <div class="step-title">Check the Box and Click "Open Gallery"</div>
                     <div class="step-description">
-                        After you finish reading all 6 steps in this guide, you'll close this guide and return to the main page. Then you'll click the blue "Open Gallery" button. The Gallery app will load in Safari.
+                        After you finish reading all 6 steps in this guide, you'll close this guide and return to the main page. You'll first click the empty box confirming that you read this guide. Only then will you be allowed click the blue "Open Gallery" button. The Gallery app will load in Safari. Click Next Step to continue.
                     </div>
                     <div class="tip-box">
                         <strong>⚠️ Important:</strong>
-                        <p>Don't do this step yet! Just read and understand. You'll do all these actions AFTER you finish reading this entire guide.</p>
+                        <p>Don't close the guide! Just read and understand. You'll do all these actions AFTER you finish reading this entire guide.</p>
                     </div>
                 </div>
 
@@ -457,16 +457,16 @@
                     <div class="step-number">2</div>
                     <div class="step-title">Find the Share Button (After Gallery Opens)</div>
                     <div class="step-description">
-                        After the Gallery opens on your screen, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons.
+                        After the Gallery opens on your screen, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons, if not swipe down or tap the bottom center where the url is. You can locate this button now for practice but DON'T click it until you finish reading step 3.
                     </div>
                     <div class="share-button-demo">
                         <div class="share-icon">⎙</div>
-                        <p>Tap this Share button</p>
+                        <p>Locate and tap this Share button</p>
                         <small>It looks like a box with an arrow pointing up</small>
                     </div>
                     <div class="tip-box">
                         <strong>💡 Where is it?</strong>
-                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button. It's the middle button in the toolbar.</p>
+                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button, or after clicking the <strong>(...) button</strong> at the bottom right of Safari.</p>
                     </div>
                 </div>
 
@@ -474,11 +474,11 @@
                     <div class="step-number">3</div>
                     <div class="step-title">Tap "Add to Home Screen"</div>
                     <div class="step-description">
-                        A menu will slide up from the bottom. <strong>Scroll down</strong> in this menu until you see "Add to Home Screen". Tap it.
+                        Once you have tapped the share button, a menu will slide up from the bottom. <strong>Swipe up</strong> in this menu until you see "Add to Home Screen". DON'T tap it just yet.
                     </div>
                     <div class="tip-box">
                         <strong>💡 Can't find it?</strong>
-                        <p>The "Add to Home Screen" option is usually near the middle of the share menu. Keep scrolling down if you don't see it right away. It has a plus (+) icon next to it.</p>
+                        <p>The "Add to Home Screen" option is usually near the middle of the share menu. Keep swiping up if you don't see it right away. It has a plus (+) icon next to it.</p>
                     </div>
                 </div>
 
@@ -486,7 +486,7 @@
                     <div class="step-number">4</div>
                     <div class="step-title">Confirm Installation</div>
                     <div class="step-description">
-                        A preview screen will appear showing the app icon and name "Gallery". Tap the blue "Add" button in the <strong>top-right corner</strong>.
+                        A preview screen will appear showing the app icon and name. Rename it to whatever you wish and then tap the blue "Add" button in the <strong>top-right corner</strong>.
                     </div>
                     <div class="tip-box">
                         <strong>💡 Almost done!</strong>
@@ -498,7 +498,7 @@
                     <div class="step-number">5</div>
                     <div class="step-title">Find Your App</div>
                     <div class="step-description">
-                        Look at your iPhone home screen. You'll see a new icon with a 📸 camera emoji. This is your Gallery app!
+                        Look at your iPhone home screen. You'll see a new icon on your homescreen with the name you created. This is your Gallery app!
                     </div>
                     <div class="tip-box">
                         <strong>💡 Success!</strong>
@@ -510,7 +510,7 @@
                     <div class="step-number">6</div>
                     <div class="step-title">You're Done Reading! 🎉</div>
                     <div class="step-description">
-                        You've now read all the steps! Remember: you haven't actually done anything yet - you've just learned what to do. Now close this guide and follow the 3 steps on the main page.
+                        You've now read all the steps! Remember: you haven't actually done anything yet - you've just learned what to do. Now make sure you click the "Done Reading - Close Guide" button and continue to follow the steps on the main page.
                     </div>
                     <div class="tip-box">
                         <strong>✅ What to do next:</strong>
