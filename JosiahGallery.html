@@ -51,6 +51,33 @@
         .search-result-text { flex: 1; min-width: 0; }
         .search-result-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .search-result-desc { font-size: 12px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .install-guide-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .install-guide-modal.active { display: flex; }
+        .install-guide-content { background: white; border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; }
+        .install-guide-header { padding: 30px 30px 20px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0; }
+        .install-guide-header h2 { font-size: 24px; color: #333; margin-bottom: 10px; }
+        .install-guide-body { padding: 30px; overflow-y: auto; flex: 1; }
+        .install-step { background: white; border: 3px solid #e0e0e0; border-radius: 16px; padding: 25px; margin-bottom: 20px; transition: all 0.3s; }
+        .install-step.active { border-color: #007aff; background: #f0f8ff; box-shadow: 0 4px 20px rgba(0,122,255,0.2); transform: scale(1.02); }
+        .install-step-number { display: inline-block; width: 36px; height: 36px; background: #e0e0e0; color: #666; border-radius: 50%; text-align: center; line-height: 36px; font-weight: bold; margin-bottom: 15px; font-size: 18px; }
+        .install-step.active .install-step-number { background: #007aff; color: white; }
+        .install-step-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #333; }
+        .install-step-description { color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .share-demo { background: #f8f9fa; border: 3px dashed #007aff; border-radius: 12px; padding: 20px; margin: 15px 0; text-align: center; }
+        .share-demo-icon { font-size: 48px; margin-bottom: 10px; }
+        .share-demo p { color: #007aff; font-weight: 600; margin: 5px 0; }
+        .share-demo small { color: #666; display: block; margin-top: 10px; }
+        .install-tip { background: #fff9e6; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .install-tip strong { color: #856404; display: block; margin-bottom: 5px; }
+        .install-tip p { color: #856404; margin: 0; font-size: 14px; }
+        .install-nav { position: relative; display: flex; gap: 15px; padding: 20px 30px; background: white; border-top: 2px solid #f0f0f0; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .install-nav-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .install-nav-btn.prev { background: #f0f0f0; color: #333; }
+        .install-nav-btn.next { background: #007aff; color: white; }
+        .install-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .install-close-btn { position: absolute; top: 20px; right: 20px; background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; }
+        .install-progress { height: 6px; background: #f0f0f0; border-radius: 3px; margin-bottom: 20px; }
+        .install-progress-fill { height: 100%; background: #007aff; border-radius: 3px; transition: width 0.3s; }
         .grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -126,6 +153,77 @@
             <button class="view-option" id="listOpt">📋 List View</button>
         </div>
         <button class="view-btn" id="viewBtn">☰</button>
+    </div>
+    
+    <div class="install-guide-modal" id="installGuideModal">
+        <div class="install-guide-content">
+            <button class="install-close-btn" onclick="app.closeInstallGuide()">×</button>
+            <div class="install-guide-header">
+                <h2>Install Gallery App</h2>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Follow these steps to add this app to your home screen</p>
+                <div class="install-progress">
+                    <div class="install-progress-fill" id="installProgress" style="width: 20%"></div>
+                </div>
+            </div>
+            <div class="install-guide-body">
+                <div class="install-step active" id="installStep1">
+                    <div class="install-step-number">1</div>
+                    <div class="install-step-title">Tap the Share Button</div>
+                    <div class="install-step-description">
+                        Look at the <strong>bottom</strong> of your Safari browser. Find and tap the Share button.
+                    </div>
+                    <div class="share-demo">
+                        <div class="share-demo-icon">⎙</div>
+                        <p>Tap this button</p>
+                        <small>It looks like a box with an arrow pointing up</small>
+                    </div>
+                    <div class="install-tip">
+                        <strong>💡 Where is it?</strong>
+                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button.</p>
+                    </div>
+                </div>
+
+                <div class="install-step" id="installStep2">
+                    <div class="install-step-number">2</div>
+                    <div class="install-step-title">Find "Add to Home Screen"</div>
+                    <div class="install-step-description">
+                        After tapping Share, a menu will slide up. <strong>Scroll down</strong> in this menu until you see "Add to Home Screen" and tap it.
+                    </div>
+                    <div class="install-tip">
+                        <strong>💡 Can't find it?</strong>
+                        <p>The option is usually in the middle of the share menu. Keep scrolling down if you don't see it right away. It has a plus (+) icon next to it.</p>
+                    </div>
+                </div>
+
+                <div class="install-step" id="installStep3">
+                    <div class="install-step-number">3</div>
+                    <div class="install-step-title">Confirm Installation</div>
+                    <div class="install-step-description">
+                        A preview screen will appear showing the app icon and name "Gallery". You can rename it if you want, then tap the blue <strong>"Add"</strong> button in the top-right corner.
+                    </div>
+                    <div class="install-tip">
+                        <strong>✅ Almost done!</strong>
+                        <p>After tapping "Add", Safari will close and you'll see your home screen with the new Gallery icon!</p>
+                    </div>
+                </div>
+
+                <div class="install-step" id="installStep4">
+                    <div class="install-step-number">4</div>
+                    <div class="install-step-title">Find Your New App!</div>
+                    <div class="install-step-description">
+                        Look at your iPhone home screen. You'll see a new icon with a 📸 camera emoji. This is your Gallery app!
+                    </div>
+                    <div class="install-tip">
+                        <strong>🎉 Success!</strong>
+                        <p>Tap the Gallery icon whenever you want to use the app. It works just like any other app on your phone - offline and fast!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="install-nav">
+                <button class="install-nav-btn prev" id="installPrevBtn" onclick="app.prevInstallStep()" disabled>← Previous</button>
+                <button class="install-nav-btn next" id="installNextBtn" onclick="app.nextInstallStep()">Next Step →</button>
+            </div>
+        </div>
     </div>
     
     <div id="addMod" class="modal"><div class="modal-content"><div class="modal-header" id="addTitle">Add</div><div class="modal-body"><img id="prev" class="modal-image hidden"><div class="form-group"><label class="form-label">Name</label><input id="name" class="form-input"></div><div class="form-group"><label class="form-label">Description</label><textarea id="desc" class="form-textarea"></textarea></div></div><div class="modal-actions"><button class="btn" id="cancelAdd">Cancel</button><button class="btn btn-primary" id="saveAdd">Save</button></div></div></div>
@@ -599,6 +697,58 @@
                 }
             },
             
+            showInstallGuide() {
+                document.getElementById('installGuideModal').classList.add('active');
+                this.installStep = 1;
+                this.updateInstallStep();
+            },
+            
+            closeInstallGuide() {
+                document.getElementById('installGuideModal').classList.remove('active');
+                this.installStep = 1;
+                this.updateInstallStep();
+            },
+            
+            nextInstallStep() {
+                if (this.installStep < this.totalInstallSteps) {
+                    this.installStep++;
+                    this.updateInstallStep();
+                } else {
+                    this.closeInstallGuide();
+                }
+            },
+            
+            prevInstallStep() {
+                if (this.installStep > 1) {
+                    this.installStep--;
+                    this.updateInstallStep();
+                }
+            },
+            
+            updateInstallStep() {
+                for (let i = 1; i <= this.totalInstallSteps; i++) {
+                    const step = document.getElementById('installStep' + i);
+                    if (i === this.installStep) {
+                        step.classList.add('active');
+                        step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        step.classList.remove('active');
+                    }
+                }
+                
+                document.getElementById('installPrevBtn').disabled = this.installStep === 1;
+                
+                const nextBtn = document.getElementById('installNextBtn');
+                if (this.installStep === this.totalInstallSteps) {
+                    nextBtn.textContent = 'Done ✓';
+                } else {
+                    nextBtn.textContent = 'Next Step →';
+                }
+                
+                const progress = (this.installStep / this.totalInstallSteps) * 100;
+                document.getElementById('installProgress').style.width = progress + '%';
+            },
+            
             buildSearchIndex() {
                 this.searchIndex = [];
                 const imgs = this.getImgs();
@@ -743,7 +893,7 @@
         
         function showInstallGuide() {
             closeInstallPrompt();
-            alert('📲 How to Install:\n\n1. Tap the Share button (⎙) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top right\n4. The app icon will appear on your home screen!\n\nNote: The Share button is in the bottom center of Safari, between the back/forward arrows and tabs.');
+            app.showInstallGuide();
         }
         
         window.onload = () => app.start();
