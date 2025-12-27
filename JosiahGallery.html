@@ -6,7 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Gallery">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23007aff' width='100' height='100'/><text y='70' x='50' text-anchor='middle' font-size='60'>📸</text></svg>">
+    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Gallery&quot;,&quot;short_name&quot;:&quot;Gallery&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;}">
     <title>Gallery</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,6 +30,27 @@
         .view-option:last-child { border-bottom: none; }
         .view-option:active { background: #f0f8ff; }
         .view-option.active { background: #e5f2ff; font-weight: 600; }
+        .install-prompt { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,122,255,0.95); color: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 200; max-width: 90%; text-align: center; display: none; }
+        .install-prompt.show { display: block; animation: slideDown 0.3s; }
+        .install-prompt button { background: white; color: #007aff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; margin-top: 10px; cursor: pointer; }
+        .install-close { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.3); border: none; color: white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+        @keyframes slideDown { from { transform: translate(-50%, -20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        .search-container { padding: 10px 15px; background: white; border-bottom: 1px solid #e5e5e7; }
+        .search-wrapper { position: relative; }
+        .search-input { width: 100%; padding: 10px 40px 10px 35px; border: 1px solid #d1d1d6; border-radius: 10px; font-size: 16px; }
+        .search-input:focus { outline: none; border-color: #007aff; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999; font-size: 18px; }
+        .search-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #d1d1d6; border: none; color: white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: none; }
+        .search-clear.show { display: block; }
+        .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d1d6; border-top: none; border-radius: 0 0 10px 10px; max-height: 300px; overflow-y: auto; display: none; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .search-results.show { display: block; }
+        .search-result-item { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: #f8f9fa; }
+        .search-result-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
+        .search-result-text { flex: 1; min-width: 0; }
+        .search-result-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .search-result-desc { font-size: 12px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -74,6 +97,23 @@
             <button class="btn btn-primary" id="camBtn">📷 Camera</button>
         </div>
     </div>
+    
+    <div class="install-prompt" id="installPrompt">
+        <button class="install-close" onclick="closeInstallPrompt()">×</button>
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 5px;">📲 Install Gallery App</div>
+        <div style="font-size: 14px; margin-bottom: 10px;">Add to your home screen for easy access!</div>
+        <button onclick="showInstallGuide()">Show Me How</button>
+    </div>
+    
+    <div class="search-container" id="searchContainer" style="display: none;">
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search images..." autocomplete="off" oninput="app.handleSearch()" onfocus="if(this.value) app.handleSearch()" onkeyup="if(event.key==='Enter') document.getElementById('searchResults').classList.remove('show')">
+            <button class="search-clear" id="searchClear" onclick="app.clearSearch()">×</button>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+    
     <div class="container">
         <div id="msg" class="success"></div>
         <div id="gallery"></div>
@@ -92,7 +132,7 @@
     
     <div id="viewMod" class="modal"><div class="modal-content"><div class="modal-header" id="viewTitle"></div><div class="modal-body"><img id="viewImg" class="modal-image"><div class="form-label">DESCRIPTION</div><div id="viewDesc"></div></div><div class="modal-actions"><button class="btn" id="delView" style="background:#ff3b30;color:white">Delete</button><button class="btn" id="editView">Edit</button><button class="btn btn-primary" id="closeView">Close</button></div></div></div>
     
-    <div id="manageMod" class="modal"><div class="modal-content"><div class="modal-header">Manage Gallery</div><div class="modal-body"><div style="margin-bottom:25px"><b>📁 GROUPS</b></div><select id="groupSelModal" style="width:100%;margin-bottom:15px"></select><div class="form-group"><input id="newGrp" class="form-input" placeholder="New group name"></div><button class="btn btn-primary" id="createGrp" style="margin-bottom:10px">Create Group</button><button class="btn" id="delGrp" style="margin-bottom:30px">Delete Current Group</button><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📤 SHARE CURRENT GROUP</b></div><div class="share-option" id="exp"><b>📁 Export Group</b><div style="font-size:13px;color:#666">Save current group to share via AirDrop</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📥 IMPORT</b></div><div class="share-option" id="imp"><b>📂 Import Group</b><div style="font-size:13px;color:#666">Add a group someone shared with you</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>☁️ BACKUP</b></div><div class="share-option" id="backupCloud"><b>💾 Backup All</b><div style="font-size:13px;color:#666">Save all groups to file</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore All</b><div style="font-size:13px;color:#666">Restore from backup file</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeManage">Close</button></div></div></div>
+    <div id="manageMod" class="modal"><div class="modal-content"><div class="modal-header">Manage Gallery</div><div class="modal-body"><button class="btn" id="installBtn" style="background: rgba(0,122,255,0.1); color: #007aff; margin-bottom: 20px; display: none;">📲 Install App to Home Screen</button><div style="margin-bottom:25px"><b>📁 GROUPS</b></div><select id="groupSelModal" style="width:100%;margin-bottom:15px"></select><div class="form-group"><input id="newGrp" class="form-input" placeholder="New group name"></div><button class="btn btn-primary" id="createGrp" style="margin-bottom:10px">Create Group</button><button class="btn" id="delGrp" style="margin-bottom:30px">Delete Current Group</button><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📤 SHARE CURRENT GROUP</b></div><div class="share-option" id="exp"><b>📁 Export Group</b><div style="font-size:13px;color:#666">Save current group to share via AirDrop</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📥 IMPORT</b></div><div class="share-option" id="imp"><b>📂 Import Group</b><div style="font-size:13px;color:#666">Add a group someone shared with you</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>☁️ BACKUP</b></div><div class="share-option" id="backupCloud"><b>💾 Backup All</b><div style="font-size:13px;color:#666">Save all groups to file</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore All</b><div style="font-size:13px;color:#666">Restore from backup file</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeManage">Close</button></div></div></div>
 
     <script>
         const app = {
@@ -233,36 +273,69 @@
                 this.draw();
             },
             
-            draw() {
+            draw(fromSearch = false) {
                 const g = document.getElementById('gallery');
                 g.innerHTML = '';
                 const imgs = this.getImgs();
+                
+                // Show/hide search bar
+                const searchContainer = document.getElementById('searchContainer');
+                searchContainer.style.display = imgs.length > 0 ? 'block' : 'none';
+                
                 if (!imgs.length) {
                     g.innerHTML = '<div class="empty"><h2>No images</h2><p>Tap Add to start</p></div>';
+                    this.buildSearchIndex();
                     return;
                 }
+                
+                // Get search query
+                const query = document.getElementById('searchInput').value.trim().toLowerCase();
+                let imagesToShow = imgs;
+                
+                // Filter images if search is active
+                if (query.length > 0) {
+                    imagesToShow = [];
+                    imgs.forEach((img, index) => {
+                        const nameMatch = img.name.toLowerCase().includes(query);
+                        const descMatch = (img.description || '').toLowerCase().includes(query);
+                        if (nameMatch || descMatch) {
+                            imagesToShow.push(img);
+                        }
+                    });
+                    
+                    if (imagesToShow.length === 0) {
+                        g.innerHTML = '<div class="empty"><h2>No results</h2><p>No images match your search</p></div>';
+                        if (!fromSearch) this.buildSearchIndex();
+                        return;
+                    }
+                }
+                
                 if (this.view === 'list') {
-                    imgs.forEach((img, i) => {
+                    imagesToShow.forEach((img) => {
+                        const originalIndex = imgs.indexOf(img);
                         const d = document.createElement('div');
                         d.className = 'list-item';
                         d.innerHTML = `<img src="${img.data}" class="list-image"><div class="list-content"><div style="font-weight:600">${img.name}</div><div style="font-size:14px;color:#666">${img.description.substring(0, 80) || 'No desc'}</div></div><div class="list-actions"></div>`;
                         const a = d.querySelector('.list-actions');
-                        this.addBtns(a, i);
+                        this.addBtns(a, originalIndex);
                         g.appendChild(d);
                     });
                 } else {
                     const dv = document.createElement('div');
                     dv.className = this.view === 'big' ? 'grid' : 'grid grid-small';
-                    imgs.forEach((img, i) => {
+                    imagesToShow.forEach((img) => {
+                        const originalIndex = imgs.indexOf(img);
                         const c = document.createElement('div');
                         c.className = 'card';
                         c.innerHTML = `<img src="${img.data}" class="card-image"><div class="card-body"><div class="card-title">${img.name}</div><div class="card-actions"></div></div>`;
                         const a = c.querySelector('.card-actions');
-                        this.addBtns(a, i);
+                        this.addBtns(a, originalIndex);
                         dv.appendChild(c);
                     });
                     g.appendChild(dv);
                 }
+                
+                if (!fromSearch) this.buildSearchIndex();
             },
             
             addBtns(p, i) {
@@ -353,7 +426,7 @@
             swGrpModal() {
                 this.curr = document.getElementById('groupSelModal').value;
                 document.getElementById('groupSel').value = this.curr;
-                this.draw();
+                this.clearSearch();
             },
             
             crGrp() {
@@ -387,7 +460,7 @@
             
             swGrp() {
                 this.curr = document.getElementById('groupSel').value;
-                this.draw();
+                this.clearSearch();
             },
             
             updSel() {
@@ -507,8 +580,171 @@
                     reader.readAsText(f);
                 };
                 input.click();
+            },
+            
+            checkInstallPrompt() {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isSafari = /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
+                const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+                const promptDismissed = localStorage.getItem('installPromptDismissed');
+                
+                if (isIOS && isSafari && !isStandalone && !promptDismissed) {
+                    setTimeout(() => {
+                        document.getElementById('installPrompt').classList.add('show');
+                    }, 2000);
+                }
+                
+                if (isIOS && isSafari && !isStandalone) {
+                    document.getElementById('installBtn').style.display = 'block';
+                }
+            },
+            
+            buildSearchIndex() {
+                this.searchIndex = [];
+                const imgs = this.getImgs();
+                imgs.forEach((img, index) => {
+                    this.searchIndex.push({
+                        index: index,
+                        name: img.name.toLowerCase(),
+                        description: (img.description || '').toLowerCase(),
+                        nameOriginal: img.name,
+                        descOriginal: img.description || '',
+                        data: img.data
+                    });
+                });
+            },
+            
+            handleSearch() {
+                const query = document.getElementById('searchInput').value.trim().toLowerCase();
+                const clearBtn = document.getElementById('searchClear');
+                const results = document.getElementById('searchResults');
+                
+                console.log('Search called, query:', query);
+                
+                clearBtn.classList.toggle('show', query.length > 0);
+                
+                // IMPORTANT: Redraw the gallery to show filtered results
+                const g = document.getElementById('gallery');
+                g.innerHTML = '';
+                const imgs = this.getImgs();
+                
+                let imagesToShow = imgs;
+                
+                // Filter images if search is active
+                if (query.length > 0) {
+                    imagesToShow = [];
+                    imgs.forEach((img, index) => {
+                        const nameMatch = img.name.toLowerCase().includes(query);
+                        const descMatch = (img.description || '').toLowerCase().includes(query);
+                        if (nameMatch || descMatch) {
+                            imagesToShow.push(img);
+                        }
+                    });
+                    
+                    if (imagesToShow.length === 0) {
+                        g.innerHTML = '<div class="empty"><h2>No results</h2><p>No images match your search</p></div>';
+                        results.classList.remove('show');
+                        return;
+                    }
+                }
+                
+                // Rebuild gallery with filtered images
+                if (this.view === 'list') {
+                    imagesToShow.forEach((img) => {
+                        const originalIndex = imgs.indexOf(img);
+                        const d = document.createElement('div');
+                        d.className = 'list-item';
+                        d.innerHTML = `<img src="${img.data}" class="list-image"><div class="list-content"><div style="font-weight:600">${img.name}</div><div style="font-size:14px;color:#666">${img.description.substring(0, 80) || 'No desc'}</div></div><div class="list-actions"></div>`;
+                        const a = d.querySelector('.list-actions');
+                        this.addBtns(a, originalIndex);
+                        g.appendChild(d);
+                    });
+                } else {
+                    const dv = document.createElement('div');
+                    dv.className = this.view === 'big' ? 'grid' : 'grid grid-small';
+                    imagesToShow.forEach((img) => {
+                        const originalIndex = imgs.indexOf(img);
+                        const c = document.createElement('div');
+                        c.className = 'card';
+                        c.innerHTML = `<img src="${img.data}" class="card-image"><div class="card-body"><div class="card-title">${img.name}</div><div class="card-actions"></div></div>`;
+                        const a = c.querySelector('.card-actions');
+                        this.addBtns(a, originalIndex);
+                        dv.appendChild(c);
+                    });
+                    g.appendChild(dv);
+                }
+                
+                // Now handle dropdown
+                if (query.length === 0) {
+                    results.classList.remove('show');
+                    return;
+                }
+                
+                // Build dropdown suggestions
+                const matches = this.searchIndex.filter(item => 
+                    item.name.includes(query) || item.description.includes(query)
+                ).slice(0, 5);
+                
+                console.log('Matches found:', matches.length);
+                
+                if (matches.length === 0) {
+                    results.innerHTML = '<div style="padding:15px;color:#666;text-align:center">No suggestions</div>';
+                    results.classList.add('show');
+                    return;
+                }
+                
+                results.innerHTML = '';
+                matches.forEach(match => {
+                    const item = document.createElement('div');
+                    item.className = 'search-result-item';
+                    
+                    const highlightText = (text, query) => {
+                        if (!text) return '';
+                        const index = text.toLowerCase().indexOf(query);
+                        if (index === -1) return text;
+                        return text.substring(0, index) + 
+                               '<span style="background:#ffe066;font-weight:600">' + 
+                               text.substring(index, index + query.length) + 
+                               '</span>' + 
+                               text.substring(index + query.length);
+                    };
+                    
+                    const highlightedName = highlightText(match.nameOriginal, query);
+                    const highlightedDesc = highlightText(match.descOriginal, query);
+                    
+                    item.innerHTML = `
+                        <img src="${match.data}" class="search-result-thumb">
+                        <div class="search-result-text">
+                            <div class="search-result-name">${highlightedName}</div>
+                            <div class="search-result-desc">${highlightedDesc || 'No description'}</div>
+                        </div>
+                    `;
+                    item.onclick = () => {
+                        this.viewImg(match.index);
+                        results.classList.remove('show');
+                    };
+                    results.appendChild(item);
+                });
+                results.classList.add('show');
+            },
+            
+            clearSearch() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('searchClear').classList.remove('show');
+                document.getElementById('searchResults').classList.remove('show');
+                this.draw(false); // Don't pass true - we want to show all images
             }
         };
+        
+        function closeInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+            localStorage.setItem('installPromptDismissed', 'true');
+        }
+        
+        function showInstallGuide() {
+            closeInstallPrompt();
+            alert('📲 How to Install:\n\n1. Tap the Share button (⎙) at the bottom of Safari\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top right\n4. The app icon will appear on your home screen!\n\nNote: The Share button is in the bottom center of Safari, between the back/forward arrows and tabs.');
+        }
         
         window.onload = () => app.start();
     </script>
