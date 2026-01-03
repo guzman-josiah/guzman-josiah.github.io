@@ -70,11 +70,8 @@
         .install-tip { background: #fff9e6; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 15px; }
         .install-tip strong { color: #856404; display: block; margin-bottom: 5px; }
         .install-tip p { color: #856404; margin: 0; font-size: 14px; }
-        .install-nav { position: relative; display: flex; gap: 15px; padding: 20px 30px; background: white; border-top: 2px solid #f0f0f0; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .install-nav-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .install-nav-btn.prev { background: #f0f0f0; color: #333; }
-        .install-nav-btn.next { background: #007aff; color: white; }
-        .install-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .install-nav { position: relative; display: flex; gap: 15px; padding: 20px 30px; background: white; border-top: 2px solid #f0f0f0; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); flex-shrink: 0; justify-content: center; }
+        .install-nav-btn { padding: 14px 30px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; background: #007aff; color: white; }
         .install-close-btn { position: absolute; top: 20px; right: 20px; background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; }
         .install-progress { height: 6px; background: #f0f0f0; border-radius: 3px; margin-bottom: 20px; }
         .install-progress-fill { height: 100%; background: #007aff; border-radius: 3px; transition: width 0.3s; }
@@ -160,12 +157,12 @@
             <button class="install-close-btn" onclick="app.closeInstallGuide()">×</button>
             <div class="install-guide-header">
                 <h2>Install Gallery App</h2>
-                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Follow these steps to add this app to your home screen</p>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Scroll through the steps below - they'll highlight as you read them</p>
                 <div class="install-progress">
-                    <div class="install-progress-fill" id="installProgress" style="width: 20%"></div>
+                    <div class="install-progress-fill" id="installProgress" style="width: 25%"></div>
                 </div>
             </div>
-            <div class="install-guide-body">
+            <div class="install-guide-body" id="installGuideBody">
                 <div class="install-step active" id="installStep1">
                     <div class="install-step-number">1</div>
                     <div class="install-step-title">Tap the Share Button</div>
@@ -220,8 +217,7 @@
                 </div>
             </div>
             <div class="install-nav">
-                <button class="install-nav-btn prev" id="installPrevBtn" onclick="app.prevInstallStep()" disabled>← Previous</button>
-                <button class="install-nav-btn next" id="installNextBtn" onclick="app.nextInstallStep()">Next Step →</button>
+                <button class="install-nav-btn" onclick="app.closeInstallGuide()">Got It! ✓</button>
             </div>
         </div>
     </div>
@@ -266,6 +262,7 @@
                 document.getElementById('closeView').onclick = () => this.clView();
                 document.getElementById('editView').onclick = () => this.edCurr();
                 document.getElementById('delView').onclick = () => this.delCurr();
+                document.getElementById('downloadView').onclick = () => this.downloadCurr();
                 document.getElementById('createGrp').onclick = () => this.crGrp();
                 document.getElementById('delGrp').onclick = () => this.delCurrGrp();
                 document.getElementById('closeManage').onclick = () => this.clManage();
@@ -275,7 +272,6 @@
                 const installBtn = document.getElementById('installBtn');
                 if (installBtn) {
                     installBtn.onclick = () => {
-                        console.log('Install button clicked');
                         this.showInstallGuide();
                     };
                 }
@@ -708,55 +704,83 @@
             },
             
             showInstallGuide() {
-                document.getElementById('installGuideModal').classList.add('active');
+                const modal = document.getElementById('installGuideModal');
+                modal.classList.add('active');
                 this.installStep = 1;
                 this.updateInstallStep();
+                
+                // Set up scroll listener with slight delay to ensure DOM is ready
+                setTimeout(() => {
+                    const guideBody = document.getElementById('installGuideBody');
+                    if (guideBody) {
+                        guideBody.onscroll = () => this.updateInstallStepOnScroll();
+                    }
+                }, 100);
             },
             
             closeInstallGuide() {
-                document.getElementById('installGuideModal').classList.remove('active');
-                this.installStep = 1;
-                this.updateInstallStep();
-            },
-            
-            nextInstallStep() {
-                if (this.installStep < this.totalInstallSteps) {
-                    this.installStep++;
-                    this.updateInstallStep();
-                } else {
-                    this.closeInstallGuide();
+                const modal = document.getElementById('installGuideModal');
+                modal.classList.remove('active');
+                
+                const guideBody = document.getElementById('installGuideBody');
+                if (guideBody) {
+                    guideBody.onscroll = null;
                 }
+                
+                this.installStep = 1;
             },
             
-            prevInstallStep() {
-                if (this.installStep > 1) {
-                    this.installStep--;
+            updateInstallStepOnScroll() {
+                const guideBody = document.getElementById('installGuideBody');
+                if (!guideBody) return;
+                
+                const scrollTop = guideBody.scrollTop;
+                const scrollHeight = guideBody.scrollHeight;
+                const clientHeight = guideBody.clientHeight;
+                const totalScrollHeight = scrollHeight - clientHeight;
+                
+                if (totalScrollHeight <= 0) {
+                    return;
+                }
+                
+                // Calculate scroll percentage (0 to 1)
+                const scrollPercent = scrollTop / totalScrollHeight;
+                
+                // Divide by number of steps (hardcoded to 4 since this.totalInstallSteps seems undefined)
+                const totalSteps = 4;
+                let newStep = Math.ceil(scrollPercent * totalSteps);
+                
+                // Make sure at start (0%) we show step 1, not step 0
+                if (newStep === 0) newStep = 1;
+                
+                // Clamp between 1 and 4
+                newStep = Math.max(1, Math.min(newStep, totalSteps));
+                
+                if (newStep !== this.installStep) {
+                    this.installStep = newStep;
                     this.updateInstallStep();
                 }
             },
             
             updateInstallStep() {
-                for (let i = 1; i <= this.totalInstallSteps; i++) {
+                // Highlight active step
+                for (let i = 1; i <= 4; i++) {
                     const step = document.getElementById('installStep' + i);
-                    if (i === this.installStep) {
-                        step.classList.add('active');
-                        step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    } else {
-                        step.classList.remove('active');
+                    if (step) {
+                        if (i === this.installStep) {
+                            step.classList.add('active');
+                        } else {
+                            step.classList.remove('active');
+                        }
                     }
                 }
                 
-                document.getElementById('installPrevBtn').disabled = this.installStep === 1;
-                
-                const nextBtn = document.getElementById('installNextBtn');
-                if (this.installStep === this.totalInstallSteps) {
-                    nextBtn.textContent = 'Done ✓';
-                } else {
-                    nextBtn.textContent = 'Next Step →';
+                // Update progress bar
+                const progress = (this.installStep / 4) * 100;
+                const progressBar = document.getElementById('installProgress');
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
                 }
-                
-                const progress = (this.installStep / this.totalInstallSteps) * 100;
-                document.getElementById('installProgress').style.width = progress + '%';
             },
             
             buildSearchIndex() {
