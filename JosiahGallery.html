@@ -230,7 +230,7 @@
     
     <div id="viewMod" class="modal"><div class="modal-content"><div class="modal-header" id="viewTitle"></div><div class="modal-body"><img id="viewImg" class="modal-image"><div class="form-label">DESCRIPTION</div><div id="viewDesc"></div></div><div class="modal-actions"><button class="btn" id="delView" style="background:#ff3b30;color:white">Delete</button><button class="btn" id="editView">Edit</button><button class="btn btn-primary" id="closeView">Close</button></div></div></div>
     
-    <div id="manageMod" class="modal"><div class="modal-content"><div class="modal-header">Manage Gallery</div><div class="modal-body"><button class="btn" id="installBtn" style="background: rgba(0,122,255,0.1); color: #007aff; margin-bottom: 20px; display: none;">📲 Install App to Home Screen</button><div style="margin-bottom:25px"><b>📁 GROUPS</b></div><select id="groupSelModal" style="width:100%;margin-bottom:15px"></select><div class="form-group"><input id="newGrp" class="form-input" placeholder="New group name"></div><button class="btn btn-primary" id="createGrp" style="margin-bottom:10px">Create Group</button><button class="btn" id="delGrp" style="margin-bottom:30px">Delete Current Group</button><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📤 SHARE CURRENT GROUP</b></div><div class="share-option" id="exp"><b>📁 Export Group</b><div style="font-size:13px;color:#666">Save current group to share via AirDrop</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📥 IMPORT</b></div><div class="share-option" id="imp"><b>📂 Import Group</b><div style="font-size:13px;color:#666">Add a group someone shared with you</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>☁️ BACKUP</b></div><div class="share-option" id="backupCloud"><b>💾 Backup All</b><div style="font-size:13px;color:#666">Save all groups to file</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore All</b><div style="font-size:13px;color:#666">Restore from backup file</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeManage">Close</button></div></div></div>
+    <div id="manageMod" class="modal"><div class="modal-content"><div class="modal-header">Manage Gallery</div><div class="modal-body"><button class="btn" id="installBtn" style="background: rgba(0,122,255,0.15); color: #007aff; margin-bottom: 20px; border: 2px solid #007aff;">📲 Install App to Home Screen</button><div style="margin-bottom:25px"><b>📁 GROUPS</b></div><select id="groupSelModal" style="width:100%;margin-bottom:15px"></select><div class="form-group"><input id="newGrp" class="form-input" placeholder="New group name"></div><button class="btn btn-primary" id="createGrp" style="margin-bottom:10px">Create Group</button><button class="btn" id="delGrp" style="margin-bottom:30px">Delete Current Group</button><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📤 SHARE CURRENT GROUP</b></div><div class="share-option" id="exp"><b>📁 Export Group</b><div style="font-size:13px;color:#666">Save current group to share via AirDrop</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>📥 IMPORT</b></div><div class="share-option" id="imp"><b>📂 Import Group</b><div style="font-size:13px;color:#666">Add a group someone shared with you</div></div><div style="margin:30px 0;border-top:2px solid #e5e5e7"></div><div style="margin-bottom:25px"><b>☁️ BACKUP</b></div><div class="share-option" id="backupCloud"><b>💾 Backup All</b><div style="font-size:13px;color:#666">Save all groups to file</div></div><div class="share-option" id="restoreCloud"><b>📥 Restore All</b><div style="font-size:13px;color:#666">Restore from backup file</div></div></div><div class="modal-actions"><button class="btn btn-primary" id="closeManage">Close</button></div></div></div>
 
     <script>
         const app = {
@@ -765,15 +765,21 @@
             },
             
             handleSearch() {
+                // Debounce to reduce lag - wait 150ms after typing stops
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.performSearch();
+                }, 150);
+            },
+            
+            performSearch() {
                 const query = document.getElementById('searchInput').value.trim().toLowerCase();
                 const clearBtn = document.getElementById('searchClear');
                 const results = document.getElementById('searchResults');
                 
-                console.log('Search called, query:', query);
-                
                 clearBtn.classList.toggle('show', query.length > 0);
                 
-                // IMPORTANT: Redraw the gallery to show filtered results
+                // Rebuild gallery with filtered results
                 const g = document.getElementById('gallery');
                 g.innerHTML = '';
                 const imgs = this.getImgs();
@@ -824,18 +830,16 @@
                     g.appendChild(dv);
                 }
                 
-                // Now handle dropdown
+                // Now handle dropdown only if there's a query
                 if (query.length === 0) {
                     results.classList.remove('show');
                     return;
                 }
                 
-                // Build dropdown suggestions
+                // Build dropdown suggestions - limit to 3 for performance
                 const matches = this.searchIndex.filter(item => 
                     item.name.includes(query) || item.description.includes(query)
-                ).slice(0, 5);
-                
-                console.log('Matches found:', matches.length);
+                ).slice(0, 3);
                 
                 if (matches.length === 0) {
                     results.innerHTML = '<div style="padding:15px;color:#666;text-align:center">No suggestions</div>';
@@ -847,26 +851,11 @@
                 matches.forEach(match => {
                     const item = document.createElement('div');
                     item.className = 'search-result-item';
-                    
-                    const highlightText = (text, query) => {
-                        if (!text) return '';
-                        const index = text.toLowerCase().indexOf(query);
-                        if (index === -1) return text;
-                        return text.substring(0, index) + 
-                               '<span style="background:#ffe066;font-weight:600">' + 
-                               text.substring(index, index + query.length) + 
-                               '</span>' + 
-                               text.substring(index + query.length);
-                    };
-                    
-                    const highlightedName = highlightText(match.nameOriginal, query);
-                    const highlightedDesc = highlightText(match.descOriginal, query);
-                    
                     item.innerHTML = `
                         <img src="${match.data}" class="search-result-thumb">
                         <div class="search-result-text">
-                            <div class="search-result-name">${highlightedName}</div>
-                            <div class="search-result-desc">${highlightedDesc || 'No description'}</div>
+                            <div class="search-result-name">${match.nameOriginal}</div>
+                            <div class="search-result-desc">${match.descOriginal || 'No description'}</div>
                         </div>
                     `;
                     item.onclick = () => {
