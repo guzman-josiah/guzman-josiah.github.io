@@ -270,6 +270,16 @@
                 document.getElementById('delGrp').onclick = () => this.delCurrGrp();
                 document.getElementById('closeManage').onclick = () => this.clManage();
                 document.getElementById('groupSelModal').onchange = () => this.swGrpModal();
+                
+                // Install button
+                const installBtn = document.getElementById('installBtn');
+                if (installBtn) {
+                    installBtn.onclick = () => {
+                        console.log('Install button clicked');
+                        this.showInstallGuide();
+                    };
+                }
+                
                 document.getElementById('exp').onclick = () => this.expFile();
                 document.getElementById('imp').onclick = () => this.impFile();
                 document.getElementById('backupCloud').onclick = () => this.backupCloud();
