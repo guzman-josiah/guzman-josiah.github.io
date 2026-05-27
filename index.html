@@ -415,11 +415,10 @@ async function saveImage() {
   const overlay = document.getElementById('saving-overlay');
 
   /* 1. Strip animations so every row is fully visible */
-  const rows = zone.querySelectorAll('.bar-row');
-  rows.forEach(r => {
+  zone.querySelectorAll('.bar-row').forEach(r => {
     r.classList.remove('animate');
     r.style.animationDelay = '';
-    r.style.opacity  = '1';
+    r.style.opacity   = '1';
     r.style.transform = 'none';
   });
 
@@ -434,23 +433,38 @@ async function saveImage() {
       useCORS: true,
       logging: false,
       onclone: (doc) => {
-        /* Inside the cloned document, force every bar-row to be fully opaque */
         doc.querySelectorAll('.bar-row').forEach(r => {
-          r.style.opacity = '1';
+          r.style.opacity   = '1';
           r.style.animation = 'none';
           r.style.transform = 'none';
         });
       }
     });
 
-    const link = document.createElement('a');
-    link.download = 'team-leaderboard.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    showToast('✓ Image saved!');
+    /* Convert canvas → Blob */
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    const file = new File([blob], 'team-leaderboard.png', { type: 'image/png' });
+
+    /* On mobile: use Web Share API → opens share sheet → "Save Image" → Photos */
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Team Leaderboard' });
+      showToast('✓ Share sheet opened!');
+    } else {
+      /* Desktop fallback: regular download */
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = 'team-leaderboard.png';
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      showToast('✓ Image saved!');
+    }
   } catch(e) {
-    showToast('⚠ Could not save image');
-    console.error(e);
+    if (e.name !== 'AbortError') {
+      showToast('⚠ Could not save image');
+      console.error(e);
+    }
   } finally {
     overlay.classList.remove('show');
   }
