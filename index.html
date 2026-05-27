@@ -75,18 +75,11 @@
     transition: all 0.15s ease;
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
+  .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: #3b68f0; transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0); }
 
-  .btn-secondary {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { background: #262c3d; }
 
   .btn-danger {
@@ -97,177 +90,6 @@
     font-size: 0.72rem;
   }
   .btn-danger:hover { background: rgba(255,95,95,0.1); }
-
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  #chart-area { display: flex; flex-direction: column; gap: 14px; }
-
-  .bar-row {
-    display: grid;
-    grid-template-columns: 130px 1fr 80px;
-    align-items: center;
-    gap: 14px;
-    animation: fadeIn 0.35s ease forwards;
-    opacity: 0;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateX(-8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  .rank-name {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow: hidden;
-  }
-
-  .rank-badge {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: var(--mono);
-    flex-shrink: 0;
-  }
-
-  .rank-1 { background: rgba(245,200,66,0.15); color: var(--gold); }
-  .rank-2 { background: rgba(176,190,197,0.15); color: var(--silver); }
-  .rank-3 { background: rgba(205,127,69,0.15); color: var(--bronze); }
-  .rank-other { background: var(--surface2); color: var(--muted); }
-
-  .team-label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text);
-  }
-
-  .bar-track {
-    position: relative;
-    height: 36px;
-    background: var(--surface2);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    border-radius: 8px;
-    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    min-width: 10px;
-  }
-
-  .score-col {
-    font-family: var(--mono);
-    font-size: 1rem;
-    font-weight: 500;
-    text-align: right;
-    color: var(--text);
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.5rem 0;
-  }
-
-  .editor-section h2 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 1.25rem;
-    color: var(--text);
-  }
-
-  .editor-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .editor-row {
-    display: grid;
-    grid-template-columns: 1fr 140px auto;
-    gap: 10px;
-    align-items: center;
-  }
-
-  input[type="text"], input[type="number"] {
-    font-family: var(--font);
-    font-size: 0.85rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 9px 12px;
-    width: 100%;
-    transition: border-color 0.15s;
-    outline: none;
-  }
-
-  input[type="text"]:focus, input[type="number"]:focus {
-    border-color: var(--accent);
-  }
-
-  input[type="number"] { font-family: var(--mono); }
-
-  .add-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--border);
-  }
-
-  .add-row input { max-width: 220px; }
-  .add-row input[type="number"] { max-width: 120px; }
-
-  .save-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .hint { font-size: 0.75rem; color: var(--muted); }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem; right: 2rem;
-    background: #1a2e1a;
-    color: #6ee37a;
-    border: 1px solid rgba(110,227,122,0.25);
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    opacity: 0;
-    transform: translateY(12px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-    z-index: 999;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
 
   #capture-zone {
     background: var(--surface);
@@ -285,11 +107,7 @@
     flex-wrap: wrap;
   }
 
-  .chart-title {
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
+  .chart-title { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
 
   .chart-subtitle {
     font-size: 0.75rem;
@@ -298,6 +116,141 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
+
+  #chart-area { display: flex; flex-direction: column; gap: 14px; }
+
+  /* NO opacity:0 default — bars are always visible */
+  .bar-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* Animation only when .animate class present — removed before capture */
+  .bar-row.animate {
+    animation: fadeIn 0.35s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .rank-name { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+
+  .rank-badge {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  .rank-1 { background: rgba(245,200,66,0.15); color: var(--gold); }
+  .rank-2 { background: rgba(176,190,197,0.15); color: var(--silver); }
+  .rank-3 { background: rgba(205,127,69,0.15); color: var(--bronze); }
+  .rank-other { background: var(--surface2); color: var(--muted); }
+
+  .team-label {
+    font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: var(--text);
+  }
+
+  .bar-track {
+    position: relative; height: 36px;
+    background: var(--surface2); border-radius: 8px; overflow: hidden;
+  }
+
+  .bar-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    border-radius: 8px;
+    transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    min-width: 6px;
+  }
+
+  /* Zero-score bars: just show a dim sliver */
+  .bar-fill.zero { min-width: 6px; opacity: 0.35; }
+
+  .score-col {
+    font-family: var(--mono);
+    font-size: 1rem; font-weight: 500;
+    text-align: right; color: var(--text);
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .editor-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text); }
+
+  .editor-grid { display: flex; flex-direction: column; gap: 10px; }
+
+  .editor-row {
+    display: grid;
+    grid-template-columns: 1fr 140px auto;
+    gap: 10px; align-items: center;
+  }
+
+  input[type="text"], input[type="number"] {
+    font-family: var(--font);
+    font-size: 0.85rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input[type="text"]:focus, input[type="number"]:focus { border-color: var(--accent); }
+  input[type="number"] { font-family: var(--mono); }
+
+  .add-row {
+    display: flex; gap: 10px;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+  .add-row input[type="text"] { max-width: 220px; }
+  .add-row input[type="number"] { max-width: 120px; }
+
+  .save-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem;
+  }
+
+  .hint { font-size: 0.75rem; color: var(--muted); }
+
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: #1a2e1a; color: #6ee37a;
+    border: 1px solid rgba(110,227,122,0.25);
+    border-radius: 10px; padding: 12px 20px;
+    font-size: 0.82rem; font-weight: 600;
+    opacity: 0; transform: translateY(12px);
+    pointer-events: none;
+    transition: all 0.3s ease; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .saving-overlay {
+    position: fixed; inset: 0;
+    background: rgba(13,15,20,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 998; font-size: 0.9rem; font-weight: 600;
+    color: var(--text); letter-spacing: 0.05em;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .saving-overlay.show { opacity: 1; pointer-events: all; }
 
   @media (max-width: 600px) {
     .bar-row { grid-template-columns: 100px 1fr 60px; }
@@ -312,7 +265,7 @@
   <header>
     <div class="title-block">
       <h1>🏆 Team Leaderboard</h1>
-      <p>Rankings by points — Live & editable</p>
+      <p>Rankings by points — Live &amp; editable</p>
     </div>
     <div class="header-actions">
       <button class="btn-primary" onclick="saveImage()">⬇ Save as Image</button>
@@ -330,13 +283,11 @@
   <div class="chart-card editor-section">
     <h2>✏️ Edit Teams &amp; Points</h2>
     <div class="editor-grid" id="editor-grid"></div>
-
     <div class="add-row">
       <input type="text" id="new-name" placeholder="New team name" maxlength="20" />
       <input type="number" id="new-pts" placeholder="Points" min="0" max="99999" />
       <button class="btn-secondary" onclick="addTeam()">+ Add</button>
     </div>
-
     <div class="save-bar">
       <span class="hint">Changes update the chart instantly.</span>
       <button class="btn-primary" onclick="saveImage()">⬇ Save Chart as Image</button>
@@ -345,42 +296,35 @@
 
 </div>
 
-<div class="toast" id="toast">✓ Image saved!</div>
+<div class="saving-overlay" id="saving-overlay">Preparing image…</div>
+<div class="toast" id="toast"></div>
 
 <script>
 const COLORS = [
-  { fill: '#4f7cff', light: 'rgba(79,124,255,0.18)' },
-  { fill: '#a259ff', light: 'rgba(162,89,255,0.18)' },
-  { fill: '#00c9a7', light: 'rgba(0,201,167,0.18)' },
-  { fill: '#ff7b54', light: 'rgba(255,123,84,0.18)' },
-  { fill: '#f5c842', light: 'rgba(245,200,66,0.18)' },
-  { fill: '#ff5fa0', light: 'rgba(255,95,160,0.18)' },
-  { fill: '#43d9ad', light: 'rgba(67,217,173,0.18)' },
-  { fill: '#ff9f1c', light: 'rgba(255,159,28,0.18)' },
+  '#4f7cff','#a259ff','#00c9a7','#ff7b54',
+  '#f5c842','#ff5fa0','#43d9ad','#ff9f1c',
 ];
 
 let teams = [
-  { name: 'ICU',       pts: 0 },
-  { name: 'PCCU',      pts: 0 },
-  { name: 'ORTHO',     pts: 0 },
-  { name: 'ONCOLOGY',  pts: 0 },
-  { name: 'CARITAS',   pts: 0 },
-  { name: 'MED-SURG',  pts: 0 },
+  { name:'ICU',      pts:0 },
+  { name:'PCCU',     pts:0 },
+  { name:'ORTHO',    pts:0 },
+  { name:'ONCOLOGY', pts:0 },
+  { name:'CARITAS',  pts:0 },
+  { name:'MED-SURG', pts:0 },
 ];
 
 function sortedTeams() {
-  return [...teams].map((t, i) => ({ ...t, origIdx: i }))
-    .sort((a, b) => b.pts - a.pts);
+  return [...teams]
+    .map((t,i) => ({...t, origIdx:i}))
+    .sort((a,b) => b.pts - a.pts);
 }
 
 function rankClass(i) {
-  if (i === 0) return 'rank-1';
-  if (i === 1) return 'rank-2';
-  if (i === 2) return 'rank-3';
-  return 'rank-other';
+  return ['rank-1','rank-2','rank-3'][i] || 'rank-other';
 }
 
-function renderChart() {
+function renderChart(animate) {
   const sorted = sortedTeams();
   const max = Math.max(...sorted.map(t => t.pts), 1);
   const area = document.getElementById('chart-area');
@@ -389,25 +333,27 @@ function renderChart() {
   sorted.forEach((team, rank) => {
     const pct = Math.round((team.pts / max) * 100);
     const color = COLORS[team.origIdx % COLORS.length];
-    const row = document.createElement('div');
-    row.className = 'bar-row';
-    row.style.animationDelay = (rank * 55) + 'ms';
+    const isZero = team.pts === 0;
 
-    row.innerHTML = `
-      <div class="rank-name">
-        <span class="rank-badge ${rankClass(rank)}">#${rank + 1}</span>
-        <span class="team-label" title="${esc(team.name)}">${esc(team.name)}</span>
-      </div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%; background:${color.fill};" aria-valuenow="${team.pts}" aria-valuemax="${max}"></div>
-      </div>
-      <span class="score-col">${team.pts.toLocaleString()}</span>
-    `;
+    const row = document.createElement('div');
+    row.className = 'bar-row' + (animate ? ' animate' : '');
+    if (animate) row.style.animationDelay = (rank * 55) + 'ms';
+
+    row.innerHTML =
+      '<div class="rank-name">' +
+        '<span class="rank-badge ' + rankClass(rank) + '">#' + (rank+1) + '</span>' +
+        '<span class="team-label" title="' + esc(team.name) + '">' + esc(team.name) + '</span>' +
+      '</div>' +
+      '<div class="bar-track">' +
+        '<div class="bar-fill' + (isZero ? ' zero' : '') + '" style="width:' + (isZero ? 1 : pct) + '%;background:' + color + '"></div>' +
+      '</div>' +
+      '<span class="score-col">' + team.pts.toLocaleString() + '</span>';
+
     area.appendChild(row);
   });
 
-  const ts = document.getElementById('timestamp');
-  ts.textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('timestamp').textContent =
+    'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 }
 
 function renderEditor() {
@@ -417,71 +363,86 @@ function renderEditor() {
     const color = COLORS[i % COLORS.length];
     const row = document.createElement('div');
     row.className = 'editor-row';
-    row.innerHTML = `
-      <input type="text" value="${esc(team.name)}" maxlength="20" placeholder="Team name"
-        oninput="updateName(${i}, this.value)" style="border-left: 3px solid ${color.fill};" />
-      <input type="number" value="${team.pts}" min="0" max="99999" placeholder="Points"
-        oninput="updatePts(${i}, this.value)" />
-      <button class="btn-danger" onclick="removeTeam(${i})" title="Remove team">✕</button>
-    `;
+    row.innerHTML =
+      '<input type="text" value="' + esc(team.name) + '" maxlength="20" placeholder="Team name"' +
+        ' oninput="updateName(' + i + ',this.value)" style="border-left:3px solid ' + color + '"/>' +
+      '<input type="number" value="' + team.pts + '" min="0" max="99999" placeholder="Points"' +
+        ' oninput="updatePts(' + i + ',this.value)"/>' +
+      '<button class="btn-danger" onclick="removeTeam(' + i + ')" title="Remove">✕</button>';
     grid.appendChild(row);
   });
 }
 
-function updateName(i, val) {
-  teams[i].name = val;
-  renderChart();
-}
-
-function updatePts(i, val) {
-  teams[i].pts = Math.max(0, parseInt(val) || 0);
-  renderChart();
-}
+function updateName(i, v) { teams[i].name = v; renderChart(false); }
+function updatePts(i, v)  { teams[i].pts = Math.max(0, parseInt(v)||0); renderChart(false); }
 
 function removeTeam(i) {
   if (teams.length <= 2) { showToast('⚠ Need at least 2 teams'); return; }
-  teams.splice(i, 1);
-  renderChart();
+  teams.splice(i,1);
+  renderChart(true);
   renderEditor();
 }
 
 function addTeam() {
   const nameEl = document.getElementById('new-name');
-  const ptsEl = document.getElementById('new-pts');
-  const name = nameEl.value.trim();
-  const pts = Math.max(0, parseInt(ptsEl.value) || 0);
+  const ptsEl  = document.getElementById('new-pts');
+  const name   = nameEl.value.trim();
   if (!name) { nameEl.focus(); return; }
   if (teams.length >= 12) { showToast('⚠ Max 12 teams'); return; }
-  teams.push({ name, pts });
-  nameEl.value = '';
-  ptsEl.value = '';
+  teams.push({ name, pts: Math.max(0, parseInt(ptsEl.value)||0) });
+  nameEl.value = ''; ptsEl.value = '';
   nameEl.focus();
-  renderChart();
+  renderChart(true);
   renderEditor();
 }
 
-function esc(str) {
-  return String(str)
+function esc(s) {
+  return String(s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg || '✓ Saved!';
+  t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 async function saveImage() {
-  const zone = document.getElementById('capture-zone');
+  const zone    = document.getElementById('capture-zone');
+  const overlay = document.getElementById('saving-overlay');
+
+  /* 1. Strip animations so every row is fully visible */
+  const rows = zone.querySelectorAll('.bar-row');
+  rows.forEach(r => {
+    r.classList.remove('animate');
+    r.style.animationDelay = '';
+    r.style.opacity  = '1';
+    r.style.transform = 'none';
+  });
+
+  /* 2. Brief pause so browser paints final state */
+  overlay.classList.add('show');
+  await new Promise(r => setTimeout(r, 120));
+
   try {
     const canvas = await html2canvas(zone, {
       backgroundColor: '#161922',
       scale: 2,
       useCORS: true,
       logging: false,
+      onclone: (doc) => {
+        /* Inside the cloned document, force every bar-row to be fully opaque */
+        doc.querySelectorAll('.bar-row').forEach(r => {
+          r.style.opacity = '1';
+          r.style.animation = 'none';
+          r.style.transform = 'none';
+        });
+      }
     });
+
     const link = document.createElement('a');
     link.download = 'team-leaderboard.png';
     link.href = canvas.toDataURL('image/png');
@@ -489,17 +450,16 @@ async function saveImage() {
     showToast('✓ Image saved!');
   } catch(e) {
     showToast('⚠ Could not save image');
+    console.error(e);
+  } finally {
+    overlay.classList.remove('show');
   }
 }
 
-document.getElementById('new-name').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addTeam();
-});
-document.getElementById('new-pts').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addTeam();
-});
+document.getElementById('new-name').addEventListener('keydown', e => { if(e.key==='Enter') addTeam(); });
+document.getElementById('new-pts').addEventListener('keydown',  e => { if(e.key==='Enter') addTeam(); });
 
-renderChart();
+renderChart(true);
 renderEditor();
 </script>
 </body>
