@@ -1,657 +1,506 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Install Gallery</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container { 
-            background: white; 
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            max-width: 500px; 
-            width: 100%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
-        }
-        h1 { 
-            font-size: 32px; 
-            margin-bottom: 10px; 
-            color: #333;
-            text-align: center;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-        .warning-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .warning-box strong {
-            color: #856404;
-            font-size: 16px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .warning-box p {
-            color: #856404;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .browser-detect {
-            background: #f8d7da;
-            border: 2px solid #dc3545;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            display: none;
-        }
-        .browser-detect p {
-            color: #721c24;
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0;
-        }
-        .steps { 
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            line-height: 1.8;
-        }
-        .steps-title {
-            font-weight: 600;
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        .step {
-            margin-bottom: 12px;
-            padding-left: 25px;
-            position: relative;
-            color: #555;
-        }
-        .step:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #007aff;
-            font-weight: bold;
-        }
-        .important {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-        }
-        .important strong {
-            color: #856404;
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-        .important p {
-            color: #856404;
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        .checkbox-container {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .checkbox-container:hover {
-            background: #e8e8e8;
-        }
-        .checkbox-container input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        .checkbox-container label {
-            cursor: pointer;
-            line-height: 1.5;
-            color: #333;
-            font-size: 15px;
-            user-select: none;
-        }
-        .btn { 
-            background: #007aff; 
-            color: white; 
-            border: none; 
-            padding: 16px 40px; 
-            border-radius: 12px; 
-            font-size: 18px; 
-            font-weight: 600;
-            text-decoration: none; 
-            display: block;
-            width: 100%;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
-        }
-        .btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,122,255,0.4);
-        }
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .btn:disabled:hover {
-            background: #ccc;
-            transform: none;
-        }
-        .emoji {
-            font-size: 48px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .help-btn {
-            background: #34c759;
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: all 0.3s;
-        }
-        .help-btn:hover {
-            background: #28a745;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .modal-header {
-            padding: 30px 30px 20px;
-            border-bottom: 2px solid #f0f0f0;
-            flex-shrink: 0;
-        }
-        .modal-header h2 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .modal-body {
-            padding: 30px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .visual-step {
-            background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .visual-step.active {
-            border-color: #007aff;
-            background: #f0f8ff;
-            box-shadow: 0 4px 20px rgba(0,122,255,0.2);
-            transform: scale(1.02);
-        }
-        .step-number {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            background: #e0e0e0;
-            color: #666;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 36px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        .visual-step.active .step-number {
-            background: #007aff;
-            color: white;
-        }
-        .step-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #333;
-        }
-        .step-description {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        .step-image {
-            width: 100%;
-            border-radius: 12px;
-            border: 2px solid #e0e0e0;
-            margin: 15px 0;
-        }
-        .share-button-demo {
-            background: #f8f9fa;
-            border: 3px dashed #007aff;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        .share-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        .share-button-demo p {
-            color: #007aff;
-            font-weight: 600;
-            margin: 5px 0;
-        }
-        .share-button-demo small {
-            color: #666;
-            display: block;
-            margin-top: 10px;
-        }
-        .nav-buttons {
-            position: relative;
-            display: flex;
-            gap: 15px;
-            padding: 20px 30px;
-            background: white;
-            border-top: 2px solid #f0f0f0;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-            flex-shrink: 0;
-        }
-        .nav-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .nav-btn.prev {
-            background: #f0f0f0;
-            color: #333;
-        }
-        .nav-btn.next {
-            background: #007aff;
-            color: white;
-        }
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .nav-btn:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #f0f0f0;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .close-btn:hover {
-            background: #e0e0e0;
-        }
-        .progress-bar {
-            height: 6px;
-            background: #f0f0f0;
-            border-radius: 3px;
-            margin-bottom: 20px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: #007aff;
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-        .tip-box {
-            background: #fff9e6;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-        .tip-box strong {
-            color: #856404;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .tip-box p {
-            color: #856404;
-            margin: 0;
-            font-size: 14px;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Team Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161922;
+    --surface2: #1e2230;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f2f7;
+    --muted: #7a8299;
+    --accent: #4f7cff;
+    --gold: #f5c842;
+    --silver: #b0bec5;
+    --bronze: #cd7f45;
+    --danger: #ff5f5f;
+    --radius: 12px;
+    --font: 'Sora', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .page-wrapper { max-width: 860px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .title-block h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .title-block p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .header-actions { display: flex; gap: 10px; }
+
+  button {
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 9px 18px;
+    transition: all 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #3b68f0; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: #262c3d; }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(255,95,95,0.3);
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+  .btn-danger:hover { background: rgba(255,95,95,0.1); }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  #chart-area { display: flex; flex-direction: column; gap: 14px; }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    align-items: center;
+    gap: 14px;
+    animation: fadeIn 0.35s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .rank-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  .rank-1 { background: rgba(245,200,66,0.15); color: var(--gold); }
+  .rank-2 { background: rgba(176,190,197,0.15); color: var(--silver); }
+  .rank-3 { background: rgba(205,127,69,0.15); color: var(--bronze); }
+  .rank-other { background: var(--surface2); color: var(--muted); }
+
+  .team-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+  }
+
+  .bar-track {
+    position: relative;
+    height: 36px;
+    background: var(--surface2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    border-radius: 8px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    min-width: 10px;
+  }
+
+  .score-col {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: right;
+    color: var(--text);
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .editor-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+
+  .editor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .editor-row {
+    display: grid;
+    grid-template-columns: 1fr 140px auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  input[type="text"], input[type="number"] {
+    font-family: var(--font);
+    font-size: 0.85rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="number"] { font-family: var(--mono); }
+
+  .add-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .add-row input { max-width: 220px; }
+  .add-row input[type="number"] { max-width: 120px; }
+
+  .save-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .hint { font-size: 0.75rem; color: var(--muted); }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: #1a2e1a;
+    color: #6ee37a;
+    border: 1px solid rgba(110,227,122,0.25);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  #capture-zone {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .chart-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .chart-subtitle {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 600px) {
+    .bar-row { grid-template-columns: 100px 1fr 60px; }
+    .editor-row { grid-template-columns: 1fr 100px auto; }
+    .team-label { font-size: 0.72rem; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="emoji">📸</div>
-        <h1>Gallery App</h1>
-        <p class="subtitle">Beautiful image organization for iPhone</p>
-        
-        <div class="browser-detect" id="browserWarning">
-            <p><strong>⚠️ Wrong Browser Detected</strong><br>
-            This app must be opened in <strong>Safari</strong>. Please copy this link and open it in Safari to continue.</p>
-        </div>
+<div class="page-wrapper">
 
-        <div class="warning-box">
-            <strong>⚠️ Important</strong>
-            <p>This app ONLY works in Safari browser. If you're using Chrome, Firefox, or another browser, please open this page in Safari first.</p>
-        </div>
+  <header>
+    <div class="title-block">
+      <h1>🏆 Team Leaderboard</h1>
+      <p>Rankings by points — Live & editable</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" onclick="saveImage()">⬇ Save as Image</button>
+    </div>
+  </header>
 
-        <div class="important">
-            <strong>📋 STEP 1: Read all text from top to bottom</strong>
-            <p>Read EVERYTHING on every page from top to bottom, and before clicking anything else, tap the <strong>GREEN button below</strong> to open the step-by-step visual guide. Read through ALL 6 steps carefully - this is just for reading and understanding. You won't do any actions while the guide is open.</p>
-        </div>
+  <div id="capture-zone">
+    <div class="chart-header">
+      <span class="chart-title">Team Rankings</span>
+      <span class="chart-subtitle" id="timestamp"></span>
+    </div>
+    <div id="chart-area" aria-label="Horizontal bar chart ranking teams by points"></div>
+  </div>
 
-        <button class="help-btn" onclick="openGuide()">📖 Step-by-Step Visual Guide (START HERE)</button>
+  <div class="chart-card editor-section">
+    <h2>✏️ Edit Teams &amp; Points</h2>
+    <div class="editor-grid" id="editor-grid"></div>
 
-        <div class="important" style="margin-top: 25px;">
-            <strong>📋 STEP 2: Confirm You've Read Everything</strong>
-            <p>After you've finished reading the entire visual guide, check the box below to confirm you understand all the steps.</p>
-        </div>
-
-        <div class="checkbox-container" id="checkboxContainer>
-            <input type="checkbox" id="confirmRead" disabled>
-            <label for="confirmRead">I have read the complete visual guide and understand all 6 steps</label>
-        </div>
-
-        <div class="important" style="margin-top: 15px;">
-            <strong>📋 STEP 3: Open the Gallery</strong>
-            <p>Once you've checked the box above, click the blue "Open Gallery" button below. <strong>After</strong> the Gallery opens, that's when you'll follow the steps you learned in the guide (tap Share button, etc.)</p>
-        </div>
-
-        <button class="btn" id="openBtn" disabled onclick="openGallery()">Open Gallery</button>
+    <div class="add-row">
+      <input type="text" id="new-name" placeholder="New team name" maxlength="20" />
+      <input type="number" id="new-pts" placeholder="Points" min="0" max="99999" />
+      <button class="btn-secondary" onclick="addTeam()">+ Add</button>
     </div>
 
-    <div class="modal" id="guideModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeGuide()">✕</button>
-            <div class="modal-header">
-                <h2>Step-by-Step Installation Guide</h2>
-                <p style="color: #666; font-size: 14px; margin-top: 10px;">📖 Read each and all 6 steps carefully, and press the blue Next Step button at the bottom after every step that you read - Do NOT perform any actions just yet while reading this guide!</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar" style="width: 16.67%"></div>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="visual-step active" id="step1">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Check the Box and Click "Open Gallery"</div>
-                    <div class="step-description">
-                        After you finish reading all 6 steps in this guide, you'll close this guide and return to the main page. You'll first click the empty box confirming that you read this guide. Only then will you be allowed click the blue "Open Gallery" button. The Gallery app will load in Safari. Click Next Step to continue.
-                    </div>
-                    <div class="tip-box">
-                        <strong>⚠️ Important:</strong>
-                        <p>Don't close the guide! Just read and understand. You'll do all these actions AFTER you finish reading this entire guide.</p>
-                    </div>
-                </div>
-
-                <div class="visual-step" id="step2">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Find the Share Button (After Gallery Opens)</div>
-                    <div class="step-description">
-                        After the Gallery opens on your screen, look at the <strong>bottom</strong> of your Safari browser. You'll see a row of buttons, if not swipe down or tap the bottom center where the url is. You can locate this button now for practice but DON'T click it until you finish reading step 3.
-                    </div>
-                    <div class="share-button-demo">
-                        <div class="share-icon">⎙</div>
-                        <p>Locate and tap this Share button</p>
-                        <small>It looks like a box with an arrow pointing up</small>
-                    </div>
-                    <div class="tip-box">
-                        <strong>💡 Where is it?</strong>
-                        <p>The Share button (⎙) is at the <strong>bottom center</strong> of Safari, between the back/forward arrows and the tabs button, or after clicking the <strong>(...) button</strong> at the bottom right of Safari.</p>
-                    </div>
-                </div>
-
-                <div class="visual-step" id="step3">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Tap "Add to Home Screen"</div>
-                    <div class="step-description">
-                        Once you have tapped the share button, a menu will slide up from the bottom. <strong>Swipe up</strong> in this menu until you see "Add to Home Screen". DON'T tap it just yet.
-                    </div>
-                    <div class="tip-box">
-                        <strong>💡 Can't find it?</strong>
-                        <p>The "Add to Home Screen" option is usually near the middle of the share menu. Keep swiping up if you don't see it right away. It has a plus (+) icon next to it.</p>
-                    </div>
-                </div>
-
-                <div class="visual-step" id="step4">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Confirm Installation</div>
-                    <div class="step-description">
-                        A preview screen will appear showing the app icon and name. Rename it to whatever you wish and then tap the blue "Add" button in the <strong>top-right corner</strong>.
-                    </div>
-                    <div class="tip-box">
-                        <strong>💡 Almost done!</strong>
-                        <p>After tapping "Add", Safari will close and you'll see your home screen.</p>
-                    </div>
-                </div>
-
-                <div class="visual-step" id="step5">
-                    <div class="step-number">5</div>
-                    <div class="step-title">Find Your App</div>
-                    <div class="step-description">
-                        Look at your iPhone home screen. You'll see a new icon on your homescreen with the name you created. This is your Gallery app!
-                    </div>
-                    <div class="tip-box">
-                        <strong>💡 Success!</strong>
-                        <p>Tap the Gallery icon whenever you want to use the app. It works just like any other app on your phone!</p>
-                    </div>
-                </div>
-
-                <div class="visual-step" id="step6">
-                    <div class="step-number">6</div>
-                    <div class="step-title">You're Done Reading! 🎉</div>
-                    <div class="step-description">
-                        You've now read all the steps! Remember: you haven't actually done anything yet - you've just learned what to do. Now make sure you click the "Done Reading - Close Guide" button and continue to follow the steps on the main page.
-                    </div>
-                    <div class="tip-box">
-                        <strong>✅ What to do next:</strong>
-                        <p><strong>1.</strong> Close this guide<br>
-                        <strong>2.</strong> Check the confirmation box on the main page<br>
-                        <strong>3.</strong> Click "Open Gallery"<br>
-                        <strong>4.</strong> THEN perform all the steps you just learned!</p>
-                    </div>
-                </div>
-            </div>
-            <div class="nav-buttons">
-                <button class="nav-btn prev" id="prevBtn" onclick="prevStep()" disabled>← Previous</button>
-                <button class="nav-btn next" id="nextBtn" onclick="nextStep()">Next →</button>
-            </div>
-        </div>
+    <div class="save-bar">
+      <span class="hint">Changes update the chart instantly.</span>
+      <button class="btn-primary" onclick="saveImage()">⬇ Save Chart as Image</button>
     </div>
+  </div>
 
-    <script>
-        let currentStep = 1;
-        const totalSteps = 6;
+</div>
 
-        // Detect if NOT Safari
-        function isSafari() {
-            const ua = navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/.test(ua);
-            const isWebkit = /WebKit/.test(ua);
-            const isChrome = /CriOS/.test(ua);
-            const isFirefox = /FxiOS/.test(ua);
-            const isSafariUA = /Safari/.test(ua);
-            
-            return isIOS && isWebkit && !isChrome && !isFirefox && isSafariUA;
-        }
+<div class="toast" id="toast">✓ Image saved!</div>
 
-        // Show warning if not Safari
-        if (!isSafari()) {
-            document.getElementById('browserWarning').style.display = 'block';
-        }
+<script>
+const COLORS = [
+  { fill: '#4f7cff', light: 'rgba(79,124,255,0.18)' },
+  { fill: '#a259ff', light: 'rgba(162,89,255,0.18)' },
+  { fill: '#00c9a7', light: 'rgba(0,201,167,0.18)' },
+  { fill: '#ff7b54', light: 'rgba(255,123,84,0.18)' },
+  { fill: '#f5c842', light: 'rgba(245,200,66,0.18)' },
+  { fill: '#ff5fa0', light: 'rgba(255,95,160,0.18)' },
+  { fill: '#43d9ad', light: 'rgba(67,217,173,0.18)' },
+  { fill: '#ff9f1c', light: 'rgba(255,159,28,0.18)' },
+];
 
-        function toggleCheckbox() {
-            const checkbox = document.getElementById('confirmRead');
-            if (!checkbox.disabled) {
-                checkbox.checked = !checkbox.checked;
-                checkButton();
-            }
-        }
+let teams = [
+  { name: 'ICU',       pts: 0 },
+  { name: 'PCCU',      pts: 0 },
+  { name: 'ORTHO',     pts: 0 },
+  { name: 'ONCOLOGY',  pts: 0 },
+  { name: 'CARITAS',   pts: 0 },
+  { name: 'MED-SURG',  pts: 0 },
+];
 
-        function checkButton() {
-            const checkbox = document.getElementById('confirmRead');
-            const button = document.getElementById('openBtn');
-            button.disabled = !checkbox.checked;
-        }
+function sortedTeams() {
+  return [...teams].map((t, i) => ({ ...t, origIdx: i }))
+    .sort((a, b) => b.pts - a.pts);
+}
 
-        // Set up checkbox container click handler
-        document.getElementById('checkboxContainer').addEventListener('click', function(e) {
-            // Only toggle if clicking the container or label, not the checkbox itself
-            if (e.target.tagName !== 'INPUT') {
-                toggleCheckbox();
-            }
-        });
+function rankClass(i) {
+  if (i === 0) return 'rank-1';
+  if (i === 1) return 'rank-2';
+  if (i === 2) return 'rank-3';
+  return 'rank-other';
+}
 
-        // Set up checkbox change handler
-        document.getElementById('confirmRead').addEventListener('change', function() {
-            checkButton();
-        });
+function renderChart() {
+  const sorted = sortedTeams();
+  const max = Math.max(...sorted.map(t => t.pts), 1);
+  const area = document.getElementById('chart-area');
+  area.innerHTML = '';
 
-        function openGallery() {
-            if (!isSafari()) {
-                alert('⚠️ Please open this page in Safari browser!\n\nThis app will not work properly in other browsers. Copy this link and paste it into Safari.');
-                return;
-            }
-            window.location.href = 'JosiahGallery.html';
-        }
+  sorted.forEach((team, rank) => {
+    const pct = Math.round((team.pts / max) * 100);
+    const color = COLORS[team.origIdx % COLORS.length];
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.style.animationDelay = (rank * 55) + 'ms';
 
-        function openGuide() {
-            document.getElementById('guideModal').classList.add('active');
-            document.getElementById('confirmRead').disabled = false;
-            updateStepDisplay();
-        }
+    row.innerHTML = `
+      <div class="rank-name">
+        <span class="rank-badge ${rankClass(rank)}">#${rank + 1}</span>
+        <span class="team-label" title="${esc(team.name)}">${esc(team.name)}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%; background:${color.fill};" aria-valuenow="${team.pts}" aria-valuemax="${max}"></div>
+      </div>
+      <span class="score-col">${team.pts.toLocaleString()}</span>
+    `;
+    area.appendChild(row);
+  });
 
-        function closeGuide() {
-            document.getElementById('guideModal').classList.remove('active');
-            currentStep = 1;
-            updateStepDisplay();
-        }
+  const ts = document.getElementById('timestamp');
+  ts.textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
-        function nextStep() {
-            if (currentStep < totalSteps) {
-                currentStep++;
-                updateStepDisplay();
-            }
-        }
+function renderEditor() {
+  const grid = document.getElementById('editor-grid');
+  grid.innerHTML = '';
+  teams.forEach((team, i) => {
+    const color = COLORS[i % COLORS.length];
+    const row = document.createElement('div');
+    row.className = 'editor-row';
+    row.innerHTML = `
+      <input type="text" value="${esc(team.name)}" maxlength="20" placeholder="Team name"
+        oninput="updateName(${i}, this.value)" style="border-left: 3px solid ${color.fill};" />
+      <input type="number" value="${team.pts}" min="0" max="99999" placeholder="Points"
+        oninput="updatePts(${i}, this.value)" />
+      <button class="btn-danger" onclick="removeTeam(${i})" title="Remove team">✕</button>
+    `;
+    grid.appendChild(row);
+  });
+}
 
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                updateStepDisplay();
-            }
-        }
+function updateName(i, val) {
+  teams[i].name = val;
+  renderChart();
+}
 
-        function updateStepDisplay() {
-            // Update all steps
-            for (let i = 1; i <= totalSteps; i++) {
-                const step = document.getElementById('step' + i);
-                if (i === currentStep) {
-                    step.classList.add('active');
-                    step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    step.classList.remove('active');
-                }
-            }
+function updatePts(i, val) {
+  teams[i].pts = Math.max(0, parseInt(val) || 0);
+  renderChart();
+}
 
-            // Update buttons
-            document.getElementById('prevBtn').disabled = currentStep === 1;
-            const nextBtn = document.getElementById('nextBtn');
-            if (currentStep === totalSteps) {
-                nextBtn.textContent = 'Done Reading - Close Guide ✓';
-                nextBtn.onclick = closeGuide;
-            } else {
-                nextBtn.textContent = 'Next Step →';
-                nextBtn.onclick = nextStep;
-            }
+function removeTeam(i) {
+  if (teams.length <= 2) { showToast('⚠ Need at least 2 teams'); return; }
+  teams.splice(i, 1);
+  renderChart();
+  renderEditor();
+}
 
-            // Update progress bar
-            const progress = (currentStep / totalSteps) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-        }
+function addTeam() {
+  const nameEl = document.getElementById('new-name');
+  const ptsEl = document.getElementById('new-pts');
+  const name = nameEl.value.trim();
+  const pts = Math.max(0, parseInt(ptsEl.value) || 0);
+  if (!name) { nameEl.focus(); return; }
+  if (teams.length >= 12) { showToast('⚠ Max 12 teams'); return; }
+  teams.push({ name, pts });
+  nameEl.value = '';
+  ptsEl.value = '';
+  nameEl.focus();
+  renderChart();
+  renderEditor();
+}
 
-        // Prevent accidental form submission
-        document.getElementById('confirmRead').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                toggleCheckbox();
-            }
-        });
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
-        // Close modal on background click
-        document.getElementById('guideModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeGuide();
-            }
-        });
-    </script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || '✓ Saved!';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+async function saveImage() {
+  const zone = document.getElementById('capture-zone');
+  try {
+    const canvas = await html2canvas(zone, {
+      backgroundColor: '#161922',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = 'team-leaderboard.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✓ Image saved!');
+  } catch(e) {
+    showToast('⚠ Could not save image');
+  }
+}
+
+document.getElementById('new-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTeam();
+});
+document.getElementById('new-pts').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTeam();
+});
+
+renderChart();
+renderEditor();
+</script>
 </body>
 </html>
