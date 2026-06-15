@@ -289,8 +289,11 @@
       <button class="btn-secondary" onclick="addTeam()">+ Add</button>
     </div>
     <div class="save-bar">
-      <span class="hint">Changes update the chart instantly.</span>
-      <button class="btn-primary" onclick="saveImage()">⬇ Save Chart as Image</button>
+      <span class="hint">Changes are saved automatically in this browser.</span>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" onclick="resetTeams()">↺ Reset</button>
+        <button class="btn-primary" onclick="saveImage()">⬇ Save Chart as Image</button>
+      </div>
     </div>
   </div>
 
@@ -305,7 +308,9 @@ const COLORS = [
   '#f5c842','#ff5fa0','#43d9ad','#ff9f1c',
 ];
 
-let teams = [
+const STORAGE_KEY = 'team-leaderboard-data';
+
+const DEFAULT_TEAMS = [
   { name:'ICU',      pts:0 },
   { name:'PCCU',     pts:0 },
   { name:'ORTHO',    pts:0 },
@@ -313,6 +318,27 @@ let teams = [
   { name:'CARITAS',  pts:0 },
   { name:'MED-SURG', pts:0 },
 ];
+
+function loadTeams() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_TEAMS.map(t => ({...t}));
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length >= 2 &&
+        parsed.every(t => typeof t.name === 'string' && typeof t.pts === 'number')) {
+      return parsed;
+    }
+  } catch(e) { /* fall through to defaults */ }
+  return DEFAULT_TEAMS.map(t => ({...t}));
+}
+
+function saveTeams() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(teams));
+  } catch(e) { /* storage unavailable - silently ignore */ }
+}
+
+let teams = loadTeams();
 
 function sortedTeams() {
   return [...teams]
@@ -373,12 +399,13 @@ function renderEditor() {
   });
 }
 
-function updateName(i, v) { teams[i].name = v; renderChart(false); }
-function updatePts(i, v)  { teams[i].pts = Math.max(0, parseInt(v)||0); renderChart(false); }
+function updateName(i, v) { teams[i].name = v; saveTeams(); renderChart(false); }
+function updatePts(i, v)  { teams[i].pts = Math.max(0, parseInt(v)||0); saveTeams(); renderChart(false); }
 
 function removeTeam(i) {
   if (teams.length <= 2) { showToast('⚠ Need at least 2 teams'); return; }
   teams.splice(i,1);
+  saveTeams();
   renderChart(true);
   renderEditor();
 }
@@ -392,6 +419,7 @@ function addTeam() {
   teams.push({ name, pts: Math.max(0, parseInt(ptsEl.value)||0) });
   nameEl.value = ''; ptsEl.value = '';
   nameEl.focus();
+  saveTeams();
   renderChart(true);
   renderEditor();
 }
@@ -472,6 +500,15 @@ async function saveImage() {
 
 document.getElementById('new-name').addEventListener('keydown', e => { if(e.key==='Enter') addTeam(); });
 document.getElementById('new-pts').addEventListener('keydown',  e => { if(e.key==='Enter') addTeam(); });
+
+function resetTeams() {
+  if (!confirm('Reset all teams and points back to defaults?')) return;
+  teams = DEFAULT_TEAMS.map(t => ({...t}));
+  saveTeams();
+  renderChart(true);
+  renderEditor();
+  showToast('↺ Reset to defaults');
+}
 
 renderChart(true);
 renderEditor();
